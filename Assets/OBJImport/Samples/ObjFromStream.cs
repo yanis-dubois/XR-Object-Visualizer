@@ -9,7 +9,7 @@ public class ObjFromStream : MonoBehaviour {
 
 	void Start () {
         // make www for object
-        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/Segmentation_1.obj");
+        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/Segmentation_cerveau/Segmentation_cerveau.obj");
         while (!www_obj.isDone)
             System.Threading.Thread.Sleep(1);
         // make www for material

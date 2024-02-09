@@ -173,8 +173,8 @@ public class MTLLoader {
             {
                 var currentColor = currentMaterial.GetColor("_Color");
                 var kdColor = OBJLoaderHelper.ColorFromStrArray(splitLine);
-
-                currentMaterial.SetColor("_Color", new Color(kdColor.r, kdColor.g, kdColor.b, currentColor.a));
+                
+                currentMaterial.SetColor("_BaseColor", new Color(kdColor.r, kdColor.g, kdColor.b, currentColor.a));
                 continue;
             }
 
