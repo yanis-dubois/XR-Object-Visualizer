@@ -90,6 +90,9 @@ namespace Dummiesman
                 Materials = new MTLLoader().Load(mtlLibPath);
                 return;
             }
+
+            var material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "base" };
+            Materials["base"] = material;
         }
 
         /// <summary>
@@ -104,7 +107,7 @@ namespace Dummiesman
 
             Dictionary<string, OBJObjectBuilder> builderDict = new Dictionary<string, OBJObjectBuilder>();
             OBJObjectBuilder currentBuilder = null;
-            string currentMaterial = "default";
+            string currentMaterial = "base";
 
             //lists for face data
             //prevents excess GC

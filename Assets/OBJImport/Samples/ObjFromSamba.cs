@@ -1,20 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+using Dummiesman;
 using SMBLibrary;
 using SMBLibrary.Client;
 using System;
 using System.Net;
-
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class ObjFromSamba : MonoBehaviour
 {
+
+    public GameObject objectSpawner; 
+
     // Start is called before the first frame update
     void Start()
     {
         // Server details and credentials
-        string serverIP = "192.168.1.17";
+        string serverIP = "192.168.43.132";
         string shareName = "dicom";
         string username = "user";
         string password = "password";
@@ -118,6 +121,7 @@ public class ObjFromSamba : MonoBehaviour
         Debug.Log(status);
         if (status == NTStatus.STATUS_SUCCESS)
         {
+            // read file and save in stream
             System.IO.MemoryStream stream = new System.IO.MemoryStream();
             byte[] data;
             long bytesRead = 0;
@@ -136,8 +140,27 @@ public class ObjFromSamba : MonoBehaviour
                 bytesRead += data.Length;
                 stream.Write(data, 0, data.Length);
             }
-            // save the file
-            System.IO.File.WriteAllBytes("Assets/OBJImport/Samples/tw.obj", stream.ToArray());
+            // save and reload file
+            string path = "Assets/OBJImport/Samples/tw.obj";
+            System.IO.File.WriteAllBytes(path, stream.ToArray());
+            var loadedObj = new OBJLoader().Load(path);
+
+            // make object interactable
+            loadedObj.transform.parent = objectSpawner.transform;
+            
+            foreach (Transform child in loadedObj.transform) {
+                // rescale
+                Vector3 size = child.GetComponent<Renderer>().bounds.size;
+                child.transform.localScale = new Vector3(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
+
+                // move 
+                Vector3 position = child.GetComponent<Renderer>().bounds.center;
+                child.transform.position += Vector3.one - position;
+
+                // temp
+                var mat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "base" };
+                child.GetComponent<Renderer>().material = mat; 
+            }
         }
         status = fileStore.CloseFile(fileHandle);
         status = fileStore.Disconnect();

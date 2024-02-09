@@ -9,7 +9,7 @@ public class ObjFromStream : MonoBehaviour {
 
 	void Start () {
         // make www for object
-        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/Segmentation_cerveau/Segmentation_cerveau.obj");
+        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/tw.obj");
         while (!www_obj.isDone)
             System.Threading.Thread.Sleep(1);
         // make www for material
@@ -18,9 +18,9 @@ public class ObjFromStream : MonoBehaviour {
             System.Threading.Thread.Sleep(1);
         
         // create stream and load object
-        var textStream_obj = new MemoryStream(Encoding.UTF8.GetBytes(www_obj.text));
-        var textStream_mtl = new MemoryStream(Encoding.UTF8.GetBytes(www_mtl.text));
-        var loadedObj = new OBJLoader().Load(textStream_obj, textStream_mtl);
+        var stream_obj = new MemoryStream(Encoding.UTF8.GetBytes(www_obj.text));
+        var stream_mtl = new MemoryStream(Encoding.UTF8.GetBytes(www_mtl.text));
+        var loadedObj = new OBJLoader().Load(stream_obj, stream_mtl);
 
         // make object interactable
         loadedObj.transform.parent = objectSpawner.transform;
@@ -33,6 +33,8 @@ public class ObjFromStream : MonoBehaviour {
             // move 
             Vector3 position = child.GetComponent<Renderer>().bounds.center;
             child.transform.position += Vector3.one - position;
+
+
         }
 	}
 }
