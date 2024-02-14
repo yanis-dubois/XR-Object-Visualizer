@@ -33,8 +33,6 @@ public class ObjFromStream : MonoBehaviour {
             // move 
             Vector3 position = child.GetComponent<Renderer>().bounds.center;
             child.transform.position += Vector3.one - position;
-
-
         }
 	}
 }
