@@ -14,31 +14,31 @@ public class OBJImportDialog : MonoBehaviour {
     private void Start() {
         FileBrowser.SetFilters(true, new FileBrowser.Filter("Text Files", ".obj"));
         bool isDialogShown = FileBrowser.ShowLoadDialog(OpenFileCallback, null, FileBrowser.PickMode.Files, false, null, "Select a file", "Select");
-        Debug.Log("isDialogShown " + isDialogShown);
+        Debug.Log("isDialogShown = " + isDialogShown);
     }
 
     private void OpenFileCallback(string[] paths) {
-        string error = string.Empty;
+        string log = string.Empty;
 
         // at least one file
         if (paths.Length > 0) {
             foreach (string filePath in paths) {
                 if (!File.Exists(filePath)) {
-                    error = "File doesn't exist.";
+                    log = "File doesn't exist.";
                 } else {
                     if (loadedObject != null)            
                         Destroy(loadedObject);
                     OpenObjFromPath(filePath);
-                    error = "File loaded";
+                    log = "File loaded";
                 }
             }
         }
         // no file
         else {
-            error = "No file selected.";
+            log = "No file selected.";
         }
 
-        Debug.Log(error);
+        Debug.Log(log);
     }
 
     private void OpenObjFromPath(string filePath) {
@@ -50,7 +50,8 @@ public class OBJImportDialog : MonoBehaviour {
         foreach (Transform child in loadedObj.transform) {
             // rescale and move object
             Vector3 size = child.GetComponent<Renderer>().bounds.size;
-            child.transform.localScale = new Vector3(1.0f/size.x, 1.0f/size.y, 1.0f/size.z);
+            float maxDim = Mathf.Max(size.x, Mathf.Max(size.y, size.z));
+            child.transform.localScale = new Vector3(1.0f/maxDim, 1.0f/maxDim, 1.0f/maxDim);
             Vector3 position = child.GetComponent<Renderer>().bounds.center;
             child.transform.position += Vector3.one - position;
 
