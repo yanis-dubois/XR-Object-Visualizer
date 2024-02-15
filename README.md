@@ -35,3 +35,10 @@ Once in the file system, create a subfolder (for example, one named "OBJ" within
 3. From there, navigate in the native file explorer to the custom folder you created with the "obj" files (e.g., Quest3 -> Download -> OBJ) and select "Use this folder".
 4. The selected folder should now appear in the sidebar of our browser, providing access to all your files.
 5. Select the file you want to load, and voilà.
+
+### Manipulating the object
+
+- Inner triggers : Grab an object within range and move it.
+- Back triggers : Select on the UI or move an object with the rays.
+
+- Hand controls : TODO
