@@ -10,18 +10,13 @@ public class ObjFromStream : MonoBehaviour {
 
 	void Start () {
         // make www for object
-        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/tw.obj");
+        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/killeroo.obj");
         while (!www_obj.isDone)
-            System.Threading.Thread.Sleep(1);
-        // make www for material
-        var www_mtl = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/Segmentation_cerveau/Segmentation_cerveau.mtl");
-        while (!www_mtl.isDone)
             System.Threading.Thread.Sleep(1);
         
         // create stream and load object
         var stream_obj = new MemoryStream(Encoding.UTF8.GetBytes(www_obj.text));
-        var stream_mtl = new MemoryStream(Encoding.UTF8.GetBytes(www_mtl.text));
-        var tmpObj = new OBJLoader().Load(stream_obj, stream_mtl);
+        var tmpObj = new OBJLoader().Load(stream_obj);
 
         foreach (Transform child in tmpObj.transform) {
             // instantiate prefab and change mesh
@@ -31,8 +26,9 @@ public class ObjFromStream : MonoBehaviour {
             
             // rescale and move object
             Vector3 size = obj.GetComponent<Renderer>().bounds.size;
+            obj.GetComponent<BoxCollider>().size = size;
             float maxDim = Mathf.Max(size.x, Mathf.Max(size.y, size.z));
-            obj.transform.localScale = new Vector3(0.2f / maxDim, 0.2f / maxDim, 0.2f / maxDim);
+            obj.transform.localScale = new Vector3(1.0f / maxDim, 1.0f / maxDim, 1.0f / maxDim);
             Vector3 position = obj.GetComponent<Renderer>().bounds.center;
             obj.transform.position += Vector3.one - position;
 
