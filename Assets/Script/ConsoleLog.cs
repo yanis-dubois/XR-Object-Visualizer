@@ -27,8 +27,19 @@ public class ZzzLog : MonoBehaviour
     }
 
     void OnGUI() {
-        GUILayout.BeginArea(new Rect(Screen.width - 400, 0, 400, Screen.height));
-        GUILayout.Label("\n" + string.Join("\n", myLogQueue.ToArray()));
-        GUILayout.EndArea();
+    // Calcul de la position de départ pour centrer la zone
+    float zoneWidth = 400;
+    float zoneHeight = Screen.height * 0.5f; // Ajustez la hauteur selon vos besoins
+    float startX = (Screen.width - zoneWidth) / 2;
+    float startY = (Screen.height - zoneHeight) / 2;
+
+    // Utilisation des valeurs calculées pour positionner la zone de GUI
+    GUILayout.BeginArea(new Rect(startX, startY, zoneWidth, zoneHeight));
+
+    // Affichage du texte de log
+    GUILayout.Label("\n" + string.Join("\n", myLogQueue.ToArray()));
+
+    // Fermeture de la zone de GUI
+    GUILayout.EndArea();
     }
 }
