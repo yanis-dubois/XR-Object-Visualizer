@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3130029, g: 0.5501603, b: 0.8220557, a: 1}
+  m_IndirectSpecularColor: {r: 0.31461036, g: 0.5517552, b: 0.82211417, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1036,57 +1036,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4968769839778511794, guid: 8b4d02b4e05af714dab2a12548a310f8, type: 3}
   m_PrefabInstance: {fileID: 1109407790274764219}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1729134399}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 956dd6cf70eaca449a45b6a95b96c8c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1032848453
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1032848455}
-  - component: {fileID: 1032848454}
-  m_Layer: 0
-  m_Name: ObjImportSamba
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1032848454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1032848453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf4d73725b5121d4f808175574d08d9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectSpawner: {fileID: 1729134399}
---- !u!4 &1032848455
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1032848453}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1069081909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1811,11 +1766,6 @@ Transform:
   - {fileID: 257810523}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1729134399 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1836125610, guid: 8b4d02b4e05af714dab2a12548a310f8, type: 3}
-  m_PrefabInstance: {fileID: 1109407790274764219}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1729134401 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1836125612, guid: 8b4d02b4e05af714dab2a12548a310f8, type: 3}
@@ -4213,5 +4163,4 @@ SceneRoots:
   - {fileID: 2073726594}
   - {fileID: 1169920386}
   - {fileID: 1615728350}
-  - {fileID: 1032848455}
   - {fileID: 1452162909}
