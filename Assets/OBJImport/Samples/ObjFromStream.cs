@@ -30,7 +30,7 @@ public class ObjFromStream : MonoBehaviour {
             float maxDim = Mathf.Max(size.x, Mathf.Max(size.y, size.z));
             obj.transform.localScale = new Vector3(1.0f / maxDim, 1.0f / maxDim, 1.0f / maxDim);
             Vector3 position = obj.GetComponent<Renderer>().bounds.center;
-            obj.transform.position += Vector3.one - position;
+            obj.transform.position += new Vector3(0.5f, 1, 0.5f);
 
             // add material
             var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
