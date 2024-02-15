@@ -23,6 +23,7 @@ public class OBJImportDialog : MonoBehaviour {
         // at least one file
         if (paths.Length > 0) {
             foreach (string filePath in paths) {
+                Debug.Log("File path: " + filePath );
                 if (!File.Exists(filePath)) {
                     log = "File doesn't exist.";
                 } else {
@@ -40,6 +41,7 @@ public class OBJImportDialog : MonoBehaviour {
     }
 
     private void OpenObjFromPath(string filePath) {
+        
         var tmpObj = new OBJLoader().Load(filePath);
 
         // move object in the scene tree
