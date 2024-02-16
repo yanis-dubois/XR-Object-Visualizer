@@ -43,7 +43,7 @@ namespace Dummiesman
         internal List<Vector2> UVs = new List<Vector2>();
 
         //materials, accessed by objobjectbuilder
-        internal Dictionary<string, Material> Materials;
+        internal Dictionary<string, Material> Materials = new Dictionary<string, Material>();
 
         //file info for files loaded from file path, used for GameObject naming and MTL finding
         private FileInfo _objInfo;
@@ -90,9 +90,6 @@ namespace Dummiesman
                 Materials = new MTLLoader().Load(mtlLibPath);
                 return;
             }
-
-            var material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "base" };
-            Materials["base"] = material;
         }
 
         /// <summary>
@@ -107,6 +104,8 @@ namespace Dummiesman
 
             Dictionary<string, OBJObjectBuilder> builderDict = new Dictionary<string, OBJObjectBuilder>();
             OBJObjectBuilder currentBuilder = null;
+
+            Materials.Add("base", new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "base" });
             string currentMaterial = "base";
 
             //lists for face data
