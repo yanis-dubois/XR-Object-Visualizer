@@ -3477,6 +3477,10 @@ PrefabInstance:
       value: Cube
       objectReference: {fileID: 0}
     - target: {fileID: 8600423746953932247, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
+      propertyPath: m_ThrowOnDetach
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8600423746953932247, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 1145852527}

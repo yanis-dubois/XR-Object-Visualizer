@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 using UnityEngine;
 using SimpleFileBrowser;
 using Dummiesman;
@@ -26,7 +27,8 @@ public class OBJImportDialog : MonoBehaviour {
                 if (!File.Exists(filePath)) {
                     log = "File doesn't exist.";
                 } else {
-                    var tmpObj = new OBJLoader().Load(filePath);
+                    Uri uri = new Uri(filePath);
+                    var tmpObj = new OBJLoader().Load(uri.LocalPath);
                     OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
                     log = "File loaded";
                 }
