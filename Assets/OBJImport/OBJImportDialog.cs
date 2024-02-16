@@ -24,10 +24,14 @@ public class OBJImportDialog : MonoBehaviour {
         if (paths.Length > 0) {
             foreach (string filePath in paths) {
                 Debug.Log("File path: " + filePath );
-                if (!File.Exists(filePath)) {
+                string relativefilePath = relativefilePath = MakePathRelative(filePath, Application.persistentDataPath);
+                Debug.Log("Chemin relatif du fichier : " + relativefilePath);
+
+                if (!File.Exists(relativefilePath)) {
                     log = "File doesn't exist.";
                 } else {
-                    OpenObjFromPath(filePath);
+                    
+                    OpenObjFromPath(relativefilePath);
                     log = "File loaded";
                 }
             }
@@ -41,9 +45,9 @@ public class OBJImportDialog : MonoBehaviour {
     }
 
     private void OpenObjFromPath(string filePath) {
-        
-        var tmpObj = new OBJLoader().Load(filePath);
 
+        var tmpObj = new OBJLoader().Load(filePath);
+        
         // move object in the scene tree
         tmpObj.transform.parent = objectSpawner.transform;
 
@@ -97,5 +101,13 @@ public class OBJImportDialog : MonoBehaviour {
         //     child.GetComponent<Renderer>().material = mat; 
         //     // ...
         // }
+    }
+    string MakePathRelative(string fullPath, string relativeTo)
+    {
+        if (fullPath.StartsWith(relativeTo))
+        {
+            return fullPath.Substring(relativeTo.Length + 1);
+        }
+        return fullPath;
     }
 }
