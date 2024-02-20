@@ -20,7 +20,9 @@ With the APK, you can follow the "Install APK via ADB" section of [this](https:/
 
 Currently, the app allows loading "obj" files into the scene and manipulating them. However, you need to download the files onto the headset first.
 
-### Downloading OBJ Files
+For now the app can load an "obj" file from an "https" source written in a raw string in the code. The following guide describe a future implementation, that is not working yet, to open an "obj" using the file system.
+
+### Downloading OBJ Files [WIP]
 
 The Meta Quest 3 file system is highly restrictive; it does not permit opening a "base" directory like "Download" as they are protected. Therefore, we need to create new subdirectories.
 
@@ -28,7 +30,7 @@ To access your headset's file system, follow the official Meta guide [here](http
 
 Once in the file system, create a subfolder (for example, one named "OBJ" within the "Download" folder) and drop your desired "obj" files into it.
 
-### Displaying the Files in the App
+### Displaying the Files in the App [WIP]
 
 1. When the app launches, grant it the right to access file storage.
 2. Initially, you should see a file browser; click on the "Browse..." part on the left.
