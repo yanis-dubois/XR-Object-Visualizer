@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.31386304, g: 0.5505209, b: 0.82192713, a: 1}
+  m_IndirectSpecularColor: {r: 0.31453457, g: 0.55162674, b: 0.82192343, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -229,6 +229,11 @@ Transform:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1836125610, guid: 8b4d02b4e05af714dab2a12548a310f8, type: 3}
   m_PrefabInstance: {fileID: 1109407790274764219}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &93182254 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6702171966205460924, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
+  m_PrefabInstance: {fileID: 6022801790411536779}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &116192049 stripped
 MonoBehaviour:
@@ -988,6 +993,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Renderer: {fileID: 1291399511}
   m_MaterialIndex: 0
+--- !u!1 &782884701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 782884703}
+  - component: {fileID: 782884704}
+  m_Layer: 0
+  m_Name: OpenIGTLinkConnect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &782884703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782884701}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &782884704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782884701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ab7e879e9c52f4ba0a9fd6dddf6691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ipString: localhost
+  port: 18944
+  infoToSend:
+  - {fileID: 1819930136}
 --- !u!1 &798337360
 GameObject:
   m_ObjectHideFlags: 0
@@ -2028,6 +2081,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4394418703858497074, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
   m_PrefabInstance: {fileID: 6022801790411536779}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1819930136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93182254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eda9abdb1e4e3b4da523a135fa82dad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _name: Cube
+  _number: 0
+  _color: 1
+  _diameter: 1
+  _length: 1
+  _gameObject: {fileID: 93182254}
 --- !u!1 &1824647602
 GameObject:
   m_ObjectHideFlags: 0
@@ -3487,7 +3558,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6702171966205460924, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1819930136}
   m_SourcePrefab: {fileID: 100100000, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
 --- !u!1 &6154695151551999831
 GameObject:
@@ -4266,3 +4340,4 @@ SceneRoots:
   - {fileID: 1615728350}
   - {fileID: 1452162909}
   - {fileID: 1850187357}
+  - {fileID: 782884703}
