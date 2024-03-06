@@ -27,13 +27,16 @@ public class ObjFromSamba : MonoBehaviour
 
         if(client != null){
             List<string> shares = ListShares(client);
-
-            // Print the shares
+            // Print shares
             foreach(string share in shares){
-                Debug.Log(share);
+                Debug.Log("shares : " + share);
             }
 
             List<string> files = listFiles(client, shareName);
+            // Print files
+            foreach(string file in files){
+                Debug.Log("files : " + file);
+            }
 
             // read the file
             readFile(client, shareName, "obj/tw.obj");
@@ -82,8 +85,10 @@ public class ObjFromSamba : MonoBehaviour
 
     List<string> listFiles(SMB2Client client, string shareName, string directoryPath = "./")
     {
+        List<string> fileList = new List<string>();
         NTStatus status;
         ISMBFileStore fileStore = client.TreeConnect(shareName, out status);
+
         if (status == NTStatus.STATUS_SUCCESS)
         {
             object directoryHandle;
@@ -91,19 +96,20 @@ public class ObjFromSamba : MonoBehaviour
             status = fileStore.CreateFile(out directoryHandle, out fileStatus, String.Empty, AccessMask.GENERIC_READ, FileAttributes.Directory, ShareAccess.Read | ShareAccess.Write, CreateDisposition.FILE_OPEN, CreateOptions.FILE_DIRECTORY_FILE, null);
             if (status == NTStatus.STATUS_SUCCESS)
             {
-                List<QueryDirectoryFileInformation> fileList;
-                status = fileStore.QueryDirectory(out fileList, directoryHandle, "*", FileInformationClass.FileDirectoryInformation);
+                List<QueryDirectoryFileInformation> tmp_fileList;
+                status = fileStore.QueryDirectory(out tmp_fileList, directoryHandle, "*", FileInformationClass.FileDirectoryInformation);
                 status = fileStore.CloseFile(directoryHandle);
 
                 // cast each item in the fileList to a FileDirectoryInformation
-                foreach (FileDirectoryInformation file in fileList)
+                foreach (FileDirectoryInformation file in tmp_fileList)
                 {
-                    Debug.Log(file.FileName);
+                    fileList.Add(file.FileName);
                 }
             }
         }
+
         status = fileStore.Disconnect();
-        return null;
+        return fileList;
     }
 
     void readFile(SMB2Client client, string shareName, string filePath)

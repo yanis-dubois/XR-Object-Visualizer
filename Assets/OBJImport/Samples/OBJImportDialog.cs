@@ -23,15 +23,24 @@ public class OBJImportDialog : MonoBehaviour {
 
         // at least one file
         if (paths.Length > 0) {
-            foreach (string filePath in paths) {
-                if (!File.Exists(filePath)) {
-                    log = "File doesn't exist.";
-                } else {
-                    Uri uri = new Uri(filePath);
-                    var tmpObj = new OBJLoader().Load(uri.LocalPath);
+            foreach (string path in paths) {
+                Uri uri = new Uri(path);
+                string uriPath = uri.LocalPath;
+                Debug.Log("URI path = " + uriPath);
+                string[] splitedUri = uriPath.Split(':');
+                for (int i=0; i<splitedUri.Length; ++i) {
+                    Debug.Log($"splitted : {splitedUri[i]}");
+                }
+                string filePath = splitedUri.Length > 1 ? splitedUri[2] : uriPath;
+                Debug.Log($"File path = {filePath}");
+
+                // if (!File.Exists(filePath)) {
+                //     log = "File doesn't exist : " + ;
+                // } else {
+                    var tmpObj = new OBJLoader().Load(filePath);
                     OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
                     log = "File loaded";
-                }
+                // }
             }
         }
         // no file
