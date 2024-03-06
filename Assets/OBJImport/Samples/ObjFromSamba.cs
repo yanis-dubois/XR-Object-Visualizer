@@ -3,53 +3,65 @@ using SMBLibrary;
 using SMBLibrary.Client;
 using System;
 using System.Net;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ObjFromSamba : MonoBehaviour
 {
-
     public GameObject objectSpawner; 
 
+    // Server details and credentials
+    public TextMeshProUGUI serverIP_text;
+    public TextMeshProUGUI shareName_text;
+    public TextMeshProUGUI filePath_text;
+    public TextMeshProUGUI username_text;
+    public TextMeshProUGUI password_text;
+    // public TextMeshProUGUI domain_text;
+    string serverIP = "192.168.43.132";
+    string shareName = "dicom";
+    string filePath = "obj/tw.obj";
+    string username = "user";
+    string password = "password";
+    string domain = "";
+
     // Start is called before the first frame update
-    void Start()
+    void Start() {}
+
+    // Update is called once per frame
+    void Update() {}
+
+    public void OnValidate()
     {
-        // Server details and credentials
-        string serverIP = "192.168.43.132";
-        string shareName = "dicom";
-        string username = "user";
-        string password = "password";
-        string domain = "";
+        serverIP = serverIP_text.text;
+        shareName = shareName_text.text;
+        filePath = filePath_text.text;
+        username = username_text.text;
+        password = password_text.text;
+        Debug.Log("server IP: "+serverIP);
+        Debug.Log("share name: "+shareName);
+        Debug.Log("file path: "+filePath);
+        Debug.Log("username: "+username);
+        Debug.Log("password: "+password);
 
         SMB2Client client = connectToServer(serverIP, username, password, domain);
-
-        if(client != null){
+        if (client != null) {
             List<string> shares = ListShares(client);
             // Print shares
-            foreach(string share in shares){
+            foreach (string share in shares) {
                 Debug.Log("shares : " + share);
             }
 
             List<string> files = listFiles(client, shareName);
             // Print files
-            foreach(string file in files){
+            foreach (string file in files) {
                 Debug.Log("files : " + file);
             }
 
             // read the file
-            readFile(client, shareName, "obj/tw.obj");
-
+            readFile(client, shareName, filePath);
             disconnectFromServer(client);
         }
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     // Connect to the server
