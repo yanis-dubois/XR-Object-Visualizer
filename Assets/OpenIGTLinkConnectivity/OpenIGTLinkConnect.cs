@@ -76,7 +76,9 @@ public class OpenIGTLinkConnect : MonoBehaviour
 
         Debug.Log("ipString: " + ipString);
         Debug.Log("port: " + port);
-        bool isConnected = socketForUnityAndHoloLens.Connect(ipString, port);
+        // Assets/OpenIGTLinkConnectivity/OpenIGTLinkConnect.cs(79,28): error CS0029: Cannot implicitly convert type 'System.Threading.Tasks.Task<bool>' to 'bool'
+        // bool isConnected = socketForUnityAndHoloLens.Connect(ipString, port);
+        bool isConnected = socketForUnityAndHoloLens.Connect(ipString, port).Result;
         Debug.Log("Connected: " + isConnected);
 
         // start a coroutine
@@ -112,7 +114,7 @@ public class OpenIGTLinkConnect : MonoBehaviour
             yield return null;
 
             ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
-            byte[] iMSGbyteArray = socketForUnityAndHoloLens.Listen(headerSize);
+            byte[] iMSGbyteArray = socketForUnityAndHoloLens.Listen(headerSize).Result;
 
             if (iMSGbyteArray.Length >= (int)headerSize)
             {
