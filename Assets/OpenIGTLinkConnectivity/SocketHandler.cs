@@ -259,30 +259,19 @@ using System.Threading.Tasks;
 /// </summary>
 public class SocketHandler
 {
-    /// <summary>
     /// Tcp client for server communication.
-    /// </summary>
     private TcpClient tcpClient;
 
-    /// <summary>
     /// Stream to receive and send messages.
-    /// </summary>
     private NetworkStream clientStream;
 
-    /// <summary>
     /// Constructor to create a socket to communicate.
-    /// </summary>
     public SocketHandler()
     {
         tcpClient = new TcpClient();
     }
 
-    /// <summary>
     /// Connects socket to server.
-    /// </summary>
-    /// <param name="ip">Server ip</param>
-    /// <param name="port">Server port</param>
-    /// <returns>Task indicating the status of the connection.</returns>
     public async Task<bool> Connect(string ip, int port)
     {
         try
@@ -298,20 +287,14 @@ public class SocketHandler
         }
     }
 
-    /// <summary>
     /// Method to send strings to the server.
-    /// </summary>
-    /// <param name="msg">Message to be sent.</param>
     public async Task Send(String msg)
     {
         byte[] msgAsByteArray = Encoding.ASCII.GetBytes(msg);
         await Send(msgAsByteArray);
     }
 
-    /// <summary>
     /// Method to send bytes to the server.
-    /// </summary>
-    /// <param name="msg">Message to be sent.</param>
     public async Task Send(byte[] msg)
     {
         if (clientStream.CanWrite)
@@ -320,11 +303,7 @@ public class SocketHandler
         }
     }
 
-    /// <summary>
     /// Method to receive a byte array from the server.
-    /// </summary>
-    /// <param name="msgSize">Size of the message to receive.</param>
-    /// <returns>Message received from the server.</returns>
     public async Task<byte[]> Listen(uint msgSize)
     {
         byte[] bytes = new byte[msgSize];
@@ -334,9 +313,7 @@ public class SocketHandler
         return receivedBytes;
     }
 
-    /// <summary>
     /// Disconnects the socket.
-    /// </summary>
     public void Disconnect()
     {
         if (tcpClient != null)

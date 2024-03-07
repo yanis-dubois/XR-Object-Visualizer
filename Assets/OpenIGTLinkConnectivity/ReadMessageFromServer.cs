@@ -54,6 +54,11 @@ public class ReadMessageFromServer
         int crc_SP = bodySize_SP + byteArray_BodySize.Length;
         int extHeaderSize_SP = crc_SP + byteArray_CRC.Length;
         
+        //Debug the length of the incoming message
+        Debug.Log("Length of the incoming message: " + iMSGbyteArray.Length);
+
+        // Check if the incoming message has enough length to include the extHeader
+        bool hasExtHeader = iMSGbyteArray.Length >= extHeaderSize_SP + byteArray_ExtHeaderSize.Length;
 
         // Store the information into the variables
         Buffer.BlockCopy(iMSGbyteArray, version_SP, byteArray_Version, 0, byteArray_Version.Length);
@@ -62,7 +67,12 @@ public class ReadMessageFromServer
         Buffer.BlockCopy(iMSGbyteArray, timeStamp_SP, byteArray_TimeStamp, 0, byteArray_TimeStamp.Length);
         Buffer.BlockCopy(iMSGbyteArray, bodySize_SP, byteArray_BodySize, 0, byteArray_BodySize.Length);
         Buffer.BlockCopy(iMSGbyteArray, crc_SP, byteArray_CRC, 0, byteArray_CRC.Length);
-        Buffer.BlockCopy(iMSGbyteArray, extHeaderSize_SP, byteArray_ExtHeaderSize, 0, byteArray_ExtHeaderSize.Length);
+
+        if (hasExtHeader)
+        {
+            Buffer.BlockCopy(iMSGbyteArray, extHeaderSize_SP, byteArray_ExtHeaderSize, 0, byteArray_ExtHeaderSize.Length);
+            Debug.Log("ExtHeaderSize: " + BitConverter.ToString(byteArray_ExtHeaderSize));
+        }
 
 
         // If the message is Little Endian, convert it to Big Endian
@@ -83,8 +93,10 @@ public class ReadMessageFromServer
         string deviceName_iMSG = Encoding.ASCII.GetString(byteArray_DeviceName);
         UInt64 timestamp_iMSG = BitConverter.ToUInt64(byteArray_TimeStamp);
         UInt64 bodySize_iMSG = BitConverter.ToUInt64(byteArray_BodySize);
+        Debug.Log("BodySize: " + bodySize_iMSG);
         UInt64 crc_iMSG = BitConverter.ToUInt64(byteArray_CRC);
         UInt16 extHeaderSize_iMSG = BitConverter.ToUInt16(byteArray_ExtHeaderSize);
+        
 
         
         // Store all this values in the HeaderInfo structure
@@ -269,5 +281,40 @@ public class ReadMessageFromServer
         matrix.SetRow(3, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
         
         return matrix;
+    }
+
+    public static String ExtractStatusInfo(byte[] iMSGbyteArray, ReadMessageFromServer.HeaderInfo iHeaderInfo)
+    {
+        /*
+        C 	uint16 	Status code groups: 1-Ok, 2-Generic Error, ... (see below)
+        SUB_CODE 	int64 	Sub-code for the error (ex. 0x200 - file not found)
+        ERROR_NAME 	char[20] 	"Error", "OK", "Warning" - can be anything, don't relay on this
+        MESSAGE 	char[BODY_SIZE-30] 	Optional (English) description (ex. "File C:\test.ini not found")
+        */
+
+        uint headerSize = iHeaderInfo.headerSize + iHeaderInfo.extHeaderSize;
+
+        byte[] statusBytes = new byte[2];
+        byte[] subCodeBytes = new byte[8];
+        byte[] errorNameBytes = new byte[20];
+        byte[] messageBytes = new byte[iMSGbyteArray.Length - headerSize - 30];
+
+        Buffer.BlockCopy(iMSGbyteArray, (int)headerSize, statusBytes, 0, 2);
+        Buffer.BlockCopy(iMSGbyteArray, (int)headerSize + 2, subCodeBytes, 0, 8);
+        Buffer.BlockCopy(iMSGbyteArray, (int)headerSize + 10, errorNameBytes, 0, 20);
+        Buffer.BlockCopy(iMSGbyteArray, (int)headerSize + 30, messageBytes, 0, iMSGbyteArray.Length - (int)headerSize - 30);
+
+        if (BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(statusBytes);
+            Array.Reverse(subCodeBytes);
+        }
+
+        UInt16 status = BitConverter.ToUInt16(statusBytes);
+        Int64 subCode = BitConverter.ToInt64(subCodeBytes);
+        String errorName = Encoding.ASCII.GetString(errorNameBytes);
+        String message = Encoding.ASCII.GetString(messageBytes);
+
+        return "Status: " + status + " SubCode: " + subCode + " ErrorName: " + errorName + " Message: " + message;
     }
 }

@@ -13,13 +13,14 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Runtime;
+using System.Threading.Tasks;
 
 
 public class OpenIGTLinkConnect : MonoBehaviour
 {
     ///////// CONNECT TO 3D SLICER PARAMETERS /////////
     uint headerSize = 58; // Size of the header of every OpenIGTLink message
-    private SocketHandler socketForUnityAndHoloLens; // Socket to connect to Slicer
+    private SocketHandler socket; // Socket to connect to Slicer
     bool isConnected; // Boolean to check if the socket is connected
     public string ipString; // IP address of the computer running Slicer
     public int port; // Port of the computer running Slicer
@@ -29,7 +30,9 @@ public class OpenIGTLinkConnect : MonoBehaviour
 
     ///////// GENERAL VARIABLES /////////
     int scaleMultiplier = 1000; // Help variable to transform meters to millimeters and vice versa
-    
+
+    ///////// LISTEN /////////
+    bool headerReaded = false; // Boolean to check if the header of the message has been read
        
     ///////// SEND /////////
     public List<ModelInfo> infoToSend; // Array of Models to send to Slicer
@@ -72,18 +75,18 @@ public class OpenIGTLinkConnect : MonoBehaviour
     // Create a new socket handler and connect it to the server with the ip address and port provided in the function
     bool ConnectToSlicer(string ipString, int port)
     {
-        socketForUnityAndHoloLens = new SocketHandler();
+        socket = new SocketHandler();
 
         Debug.Log("ipString: " + ipString);
         Debug.Log("port: " + port);
         // Assets/OpenIGTLinkConnectivity/OpenIGTLinkConnect.cs(79,28): error CS0029: Cannot implicitly convert type 'System.Threading.Tasks.Task<bool>' to 'bool'
-        // bool isConnected = socketForUnityAndHoloLens.Connect(ipString, port);
-        bool isConnected = socketForUnityAndHoloLens.Connect(ipString, port).Result;
-        Debug.Log("Connected: " + isConnected);
+        // bool isConnected = socket.Connect(ipString, port);
+        socket.Connect(ipString, port);
+        // Debug.Log("Connected: " + isConnected);
 
         // start a coroutine
-        // listeningRoutine = StartCoroutine(ListenSlicerInfo());
-        sendingRoutine = StartCoroutine(SendTransformInfo());
+        listeningRoutine = StartCoroutine(ListenSlicerInfo());
+        // sendingRoutine = StartCoroutine(SendTransformInfo());
 
         return isConnected;
 
@@ -100,7 +103,7 @@ public class OpenIGTLinkConnect : MonoBehaviour
             foreach (ModelInfo element in infoToSend)
             {
                 Debug.Log(element);
-                SendMessageToServer.SendTransformMessage(element, scaleMultiplier, crcGenerator, CRC, socketForUnityAndHoloLens);
+                SendMessageToServer.SendTransformMessage(element, scaleMultiplier, crcGenerator, CRC, socket);
             }
         }
     }
@@ -114,39 +117,73 @@ public class OpenIGTLinkConnect : MonoBehaviour
             yield return null;
 
             ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
-            byte[] iMSGbyteArray = socketForUnityAndHoloLens.Listen(headerSize).Result;
+            byte[] iMSGbyteArray = null;
 
-            if (iMSGbyteArray.Length >= (int)headerSize)
+            Task<byte[]> task = socket.Listen(512);
+            yield return new WaitUntil(() => task.IsCompleted);
+
+            if (task.IsFaulted)
             {
-                ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
-                // Store the information of the header in the structure iHeaderInfo
-                ReadMessageFromServer.HeaderInfo iHeaderInfo = ReadMessageFromServer.ReadHeaderInfo(iMSGbyteArray);
-
-                ////////// READ THE BODY OF THE INCOMING MESSAGES //////////
-                // Get the size of the body from the header information
-                uint bodySize = Convert.ToUInt32(iHeaderInfo.bodySize);
-
-                // Process the message when it is complete (that means, we have received as many bytes as the body size + the header size)
-                if (iMSGbyteArray.Length >= (int)bodySize + (int)headerSize)
+                Debug.Log("Error listening to the server");
+            }
+            else
+            {
+                iMSGbyteArray = task.Result;
+ 
+                if (iMSGbyteArray.Length >= (int)headerSize)
                 {
-                    // Compare different message types and act accordingly
-                    if ((iHeaderInfo.msgType).Contains("TRANSFORM"))
+                    ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
+                    // Store the information of the header in the structure iHeaderInfo
+                    
+                    ReadMessageFromServer.HeaderInfo iHeaderInfo = ReadMessageFromServer.ReadHeaderInfo(iMSGbyteArray);
+
+                    Debug.Log("Message type"+ iHeaderInfo.msgType);
+
+                    ////////// READ THE BODY OF THE INCOMING MESSAGES //////////
+                    // Get the size of the body from the header information
+                    uint bodySize = Convert.ToUInt32(iHeaderInfo.bodySize);
+
+                    if ((iHeaderInfo.msgType).Contains("STATUS"))
                     {
-                        // Extract the transform matrix from the message
-                        Matrix4x4 matrix = ReadMessageFromServer.ExtractTransformInfo(iMSGbyteArray, scaleMultiplier, (int)iHeaderInfo.headerSize);
-                        // print the matrix
-                        Debug.Log(matrix);
-                        // Apply the transform matrix to the object
-                        // ApplyTransformToGameObject(matrix, movingPlane);
+                        // Extract the status message from the message
+                        string status = ReadMessageFromServer.ExtractStatusInfo(iMSGbyteArray, iHeaderInfo);
+                        Debug.Log("STATUS : "+status);
                     }
 
-                    else if ((iHeaderInfo.msgType).Contains("IMAGE"))
+                    // Process the message when it is complete (that means, we have received as many bytes as the body size + the header size)
+                    if (iMSGbyteArray.Length >= (int)bodySize + (int)headerSize )
                     {
-                        // Read and apply the image content to our preview plane
-                        // ApplyImageInfo(iMSGbyteArray, iHeaderInfo);
+                        // Compare different message types and act accordingly
+                        if ((iHeaderInfo.msgType).Contains("TRANSFORM"))
+                        {
+                            // Extract the transform matrix from the message
+                            Matrix4x4 matrix = ReadMessageFromServer.ExtractTransformInfo(iMSGbyteArray, scaleMultiplier, (int)iHeaderInfo.headerSize);
+                            // print the matrix
+                            Debug.Log(matrix);
+                            // Apply the transform matrix to the object
+                            // ApplyTransformToGameObject(matrix, movingPlane);
+                        }
+
+                        else if ((iHeaderInfo.msgType).Contains("IMAGE"))
+                        {
+                            // Read and apply the image content to our preview plane
+                            // ApplyImageInfo(iMSGbyteArray, iHeaderInfo);
+                        }
+                        else if ((iHeaderInfo.msgType).Contains("STATUS"))
+                        {
+                            // Extract the status message from the message
+                            string status = ReadMessageFromServer.ExtractStatusInfo(iMSGbyteArray, iHeaderInfo);
+                            Debug.Log("STATUS : "+status);
+                        }
+                        else
+                        {
+                            Debug.Log("Message type not recognized");
+                        }
                     }
                 }
+
             }
+
         }
     }
     
@@ -211,7 +248,7 @@ public class OpenIGTLinkConnect : MonoBehaviour
     // Called when the user disconnects Unity from 3D Slicer using the connectivity switch
     public void OnDisconnectClick()
     {
-        socketForUnityAndHoloLens.Disconnect();
+        socket.Disconnect();
         Debug.Log("Disconnected from the server");
     }
 
@@ -220,9 +257,9 @@ public class OpenIGTLinkConnect : MonoBehaviour
     void OnApplicationQuit()
     {
         // Release the socket.
-        if (socketForUnityAndHoloLens != null)
+        if (socket != null)
         {
-            socketForUnityAndHoloLens.Disconnect();
+            socket.Disconnect();
         }
     }
 }

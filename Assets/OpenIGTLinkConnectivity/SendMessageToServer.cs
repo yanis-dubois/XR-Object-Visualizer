@@ -18,7 +18,7 @@ using System.Linq;
 
 public class SendMessageToServer : MonoBehaviour
 {
-    public static void SendTransformMessage(ModelInfo model_InspectorInfo, int scaleMultiplier, CRC64 crcGenerator, string CRC, SocketHandler socketForUnityAndHoloLens)
+    public static async void SendTransformMessage(ModelInfo model_InspectorInfo, int scaleMultiplier, CRC64 crcGenerator, string CRC, SocketHandler socket)
     {
         ////////////// Get myModel properties
         string modelName = model_InspectorInfo._name;
@@ -274,10 +274,11 @@ public class SendMessageToServer : MonoBehaviour
         string hexmsg = hexHeader + CRC + hexExtHeader + body + hexMetaBody;
 
         // Encode the data string into a byte array.
-        byte[] msg = SendMessageToServer.StringToByteArray(hexmsg);
+        // byte[] msg = SendMessageToServer.StringToByteArray(hexmsg);
+        byte[] msg = StringToByteArray(hexmsg);
         
         // Send the data through the socket.     
-        socketForUnityAndHoloLens.Send(msg);
+        await socket.Send(msg);
     }
 
     // --- Send Helpers ---
