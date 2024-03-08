@@ -2,7 +2,6 @@ using Dummiesman;
 using SMBLibrary;
 using SMBLibrary.Client;
 using System;
-using System.Net;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -50,6 +49,9 @@ public class ObjFromSamba : MonoBehaviour
             // read the file
             readFile(client, shareName, filePath);
             disconnectFromServer(client);
+        } 
+        else {
+            Debug.LogError("unable to connect to server");
         }
     }
 
@@ -154,10 +156,11 @@ public class ObjFromSamba : MonoBehaviour
                 bytesRead += data.Length;
                 stream.Write(data, 0, data.Length);
             }
+
             // save and reload file
-            string path = "Assets/OBJImport/Samples/tw.obj";
-            System.IO.File.WriteAllBytes(path, stream.ToArray());
-            var loadedObj = new OBJLoader().Load(path);
+            // string path = "Assets/OBJImport/Samples/tw.obj";
+            // System.IO.File.WriteAllBytes(path, stream.ToArray());
+            var loadedObj = new OBJLoader().Load(stream);
             OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, loadedObj);
 
             status = fileStore.CloseFile(fileHandle);

@@ -1,10 +1,9 @@
 ﻿using Dummiesman;
 using System.IO;
-using System.Text;
 using TMPro;
 using UnityEngine.Networking;
-using System.Collections;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class ObjFromStream : MonoBehaviour {
 
@@ -13,39 +12,27 @@ public class ObjFromStream : MonoBehaviour {
 
     public TextMeshProUGUI url_text;
 
-	public void LoadObject () {
+	public async void LoadObject () {
         string url = url_text.text.Substring(0, url_text.text.Length-1);
-
-        StartCoroutine(GetRequest(url));
+        byte[] results = await DownloadObject(url);
+        var stream = new MemoryStream(results);
+        var tmpObj = new OBJLoader().Load(stream);
+        OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
 	}
 
-    IEnumerator GetRequest(string uri)
+    private async Task<byte[]> DownloadObject(string url)
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        var request = UnityWebRequest.Get(url);
+        request.SendWebRequest();
+        while (!request.isDone) await Task.Yield(); // wait 1 frame until request done
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || 
+            request.result == UnityWebRequest.Result.ProtocolError)
         {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
-
-            string[] pages = uri.Split('/');
-            int page = pages.Length - 1;
-
-            switch (webRequest.result)
-            {
-                case UnityWebRequest.Result.ConnectionError:
-                case UnityWebRequest.Result.DataProcessingError:
-                    Debug.LogError(pages[page] + ": Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.Success:
-                    Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
-                    byte[] results = webRequest.downloadHandler.data;
-                    var stream = new MemoryStream(results);
-                    var tmpObj = new OBJLoader().Load(stream);
-                    OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
-                    break;
-            }
+            Debug.LogError("Error: " + request.error);
+            return null;
         }
+
+        return request.downloadHandler.data;
     }
 }
