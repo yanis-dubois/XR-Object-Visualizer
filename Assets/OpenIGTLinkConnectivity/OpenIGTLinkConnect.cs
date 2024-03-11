@@ -14,6 +14,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Runtime;
 using System.Threading.Tasks;
+using TMPro;
 
 
 public class OpenIGTLinkConnect : MonoBehaviour
@@ -22,8 +23,12 @@ public class OpenIGTLinkConnect : MonoBehaviour
     uint headerSize = 58; // Size of the header of every OpenIGTLink message
     private SocketHandler socket; // Socket to connect to Slicer
     bool isConnected; // Boolean to check if the socket is connected
-    public string ipString; // IP address of the computer running Slicer
-    public int port; // Port of the computer running Slicer
+    // public string ipString; // IP address of the computer running Slicer
+    // public int port; // Port of the computer running Slicer
+    string ipString; // IP address of the computer running Slicer
+    int port; // Port of the computer running Slicer
+    public TextMeshProUGUI serverIP_text;
+    public TextMeshProUGUI port_text;
 
     Coroutine listeningRoutine; // Coroutine to control the listening part (3D Slicer -> Unity)
     Coroutine sendingRoutine; // Coroutine to control the sending part (Unity -> 3D Slicer)
@@ -50,30 +55,20 @@ public class OpenIGTLinkConnect : MonoBehaviour
         crcPolynomial = Convert.ToUInt64(crcPolynomialBinary, 2);
         crcGenerator.Init(crcPolynomial);
 
-        // // Initialize texture parameters for image transfer of the moving plane
-        // movingPlane.transform.localScale = Vector3.Scale(transform.localScale, new Vector3(movingPlane.transform.localScale.x,-movingPlane.transform.localScale.y,movingPlane.transform.localScale.z));
-        // mediaMaterial = movingPlane.GetComponent<MeshRenderer>().material;
-        // mediaTexture = new Texture2D(512, 512, TextureFormat.Alpha8, false);
-        // mediaMaterial.mainTexture = mediaTexture;
-
-        // // Initialize texture parameters for image transfer of the fix plane
-        // fixPlane = GameObject.Find("FixedImagePlane").transform.Find("FixPlane").gameObject;
-        // fixPlane.transform.localScale = Vector3.Scale(transform.localScale, new Vector3(fixPlane.transform.localScale.x,-fixPlane.transform.localScale.y,fixPlane.transform.localScale.z));
-        // fixPlaneMaterial = fixPlane.GetComponent<MeshRenderer>().material;
-        // fixPlaneMaterial.mainTexture = mediaTexture;
-
-        isConnected = ConnectToSlicer(ipString, port);
+        // isConnected = ConnectToSlicer(ipString, port);
     }
 
     // This function is called when the user activates the connectivity switch to start the communication with 3D Slicer
-    public bool OnConnectToSlicerClick(string ipString, int port)
+    public void OnConnectToSlicerClick()
     {
+        ipString = serverIP_text.text.Substring(0, serverIP_text.text.Length-1);
+        port = int.Parse(port_text.text.Substring(0, port_text.text.Length-1));
+
         isConnected = ConnectToSlicer(ipString, port);
-        return isConnected;
     }
 
     // Create a new socket handler and connect it to the server with the ip address and port provided in the function
-    bool ConnectToSlicer(string ipString, int port)
+    public bool ConnectToSlicer(string ipString, int port)
     {
         socket = new SocketHandler();
 

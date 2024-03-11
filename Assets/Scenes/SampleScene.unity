@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.31453457, g: 0.55162674, b: 0.82192343, a: 1}
+  m_IndirectSpecularColor: {r: 0.3130029, g: 0.5501603, b: 0.8220557, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -999,7 +999,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1658110579}
         m_TargetAssemblyTypeName: 
         m_MethodName: 
         m_Mode: 1
@@ -6294,6 +6294,7 @@ Transform:
   m_Children:
   - {fileID: 1850187357}
   - {fileID: 42805157}
+  - {fileID: 1658110580}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1248285040
@@ -6922,7 +6923,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1503989109714432937, guid: dc067c577ec1b854684d789b6e727cc0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2077641819426116279, guid: dc067c577ec1b854684d789b6e727cc0, type: 3}
       propertyPath: m_text
@@ -8553,6 +8554,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1656397597}
   m_CullTransparentMesh: 1
+--- !u!1 &1658110579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1658110580}
+  - component: {fileID: 1658110581}
+  m_Layer: 0
+  m_Name: OpenIGTLinkConnect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1658110580
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658110579}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1246539296}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1658110581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658110579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ab7e879e9c52f4ba0a9fd6dddf6691, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serverIP_text: {fileID: 870256742}
+  port_text: {fileID: 211485954}
+  infoToSend:
+  - {fileID: 1819930149}
 --- !u!1 &1681644617
 GameObject:
   m_ObjectHideFlags: 0
@@ -9654,7 +9703,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1503989109714432937, guid: dc067c577ec1b854684d789b6e727cc0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2077641819426116279, guid: dc067c577ec1b854684d789b6e727cc0, type: 3}
       propertyPath: m_text
@@ -10340,6 +10389,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387d725d0169046a08dd187f79ca4268, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1819930149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649227862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eda9abdb1e4e3b4da523a135fa82dad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _name: Cube
+  _number: 0
+  _color: 1
+  _diameter: 1
+  _length: 1
+  _gameObject: {fileID: 1649227862}
 --- !u!1 &1823802972
 GameObject:
   m_ObjectHideFlags: 0
@@ -12571,6 +12638,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6702171966205460924, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1819930142}
+    - targetCorrespondingSourceObject: {fileID: 6702171966205460924, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1819930149}
   m_SourcePrefab: {fileID: 100100000, guid: fb03642af2dda405e9c8acde69612e25, type: 3}
 --- !u!1 &6154695151551999831
 GameObject:
