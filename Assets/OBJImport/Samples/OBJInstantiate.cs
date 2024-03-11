@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-using Dummiesman;
 
 public class OBJInstantiate : MonoBehaviour {
 
@@ -30,6 +26,6 @@ public class OBJInstantiate : MonoBehaviour {
             obj.transform.position = new Vector3(0.5f, 1, 0.5f);
         }
 
-        Destroy(tmpObj);
+        DestroyImmediate(tmpObj); 
     }
 }

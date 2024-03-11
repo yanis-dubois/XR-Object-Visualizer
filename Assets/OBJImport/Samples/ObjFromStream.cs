@@ -1,24 +1,38 @@
 ﻿using Dummiesman;
 using System.IO;
-using System.Text;
+using TMPro;
+using UnityEngine.Networking;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class ObjFromStream : MonoBehaviour {
 
     public GameObject interactableObjectPrefab;
     public GameObject objectSpawner; 
 
-	void Start () {
-        // make www for object
-        var www_obj = new WWW("https://yanis-dubois.emi.u-bordeaux.fr/killeroo.obj");
-        while (!www_obj.isDone)
-            System.Threading.Thread.Sleep(1);
-        
-        // create stream and load object
-        var stream_obj = new MemoryStream(Encoding.UTF8.GetBytes(www_obj.text));
+    public TextMeshProUGUI url_text;
 
-        // instantiate it
-        var tmpObj = new OBJLoader().Load(stream_obj);
+	public async void LoadObject () {
+        string url = url_text.text.Substring(0, url_text.text.Length-1);
+        byte[] results = await DownloadObject(url);
+        var stream = new MemoryStream(results);
+        var tmpObj = new OBJLoader().Load(stream);
         OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
 	}
+
+    private async Task<byte[]> DownloadObject(string url)
+    {
+        var request = UnityWebRequest.Get(url);
+        request.SendWebRequest();
+        while (!request.isDone) await Task.Yield(); // wait 1 frame until request done
+
+        if (request.result == UnityWebRequest.Result.ConnectionError || 
+            request.result == UnityWebRequest.Result.ProtocolError)
+        {
+            Debug.LogError("Error: " + request.error);
+            return null;
+        }
+
+        return request.downloadHandler.data;
+    }
 }
