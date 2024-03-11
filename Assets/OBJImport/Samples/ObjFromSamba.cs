@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Threading.Tasks;
+using System.Linq;
 
 public class ObjFromSamba : MonoBehaviour
 {
@@ -18,7 +20,7 @@ public class ObjFromSamba : MonoBehaviour
     public TextMeshProUGUI username_text;
     public TextMeshProUGUI password_text;
 
-    public void LoadObject()
+    public async void LoadObject()
     {
         string domain = "";
         string serverIP = serverIP_text.text.Substring(0, serverIP_text.text.Length-1);
@@ -47,7 +49,14 @@ public class ObjFromSamba : MonoBehaviour
             }
 
             // read the file
-            readFile(client, shareName, filePath);
+            Func<byte[]> temp;
+            await Task.Run(temp = () => DownloadObject(client, shareName, filePath));
+            byte[] results = temp(); // laggy
+            Debug.Log("data size = "+results.Length);
+            var stream = new System.IO.MemoryStream(results);
+            var tmpObj = new OBJLoader().Load(stream);
+            OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
+
             disconnectFromServer(client);
         } 
         else {
@@ -122,53 +131,98 @@ public class ObjFromSamba : MonoBehaviour
         return fileList;
     }
 
-    void readFile(SMB2Client client, string shareName, string filePath)
+    // void readFile(SMB2Client client, string shareName, string filePath)
+    // {
+    //     NTStatus status;
+    //     ISMBFileStore fileStore = client.TreeConnect(shareName, out status);
+
+    //     if (status == NTStatus.STATUS_SUCCESS)
+    //     {
+    //         object fileHandle;
+    //         FileStatus fileStatus;
+    //         if (fileStore is SMB1FileStore)
+    //         {
+    //             filePath = @"\\" + filePath;
+    //         }
+    //         status = fileStore.CreateFile(out fileHandle, out fileStatus, filePath, AccessMask.GENERIC_READ | AccessMask.SYNCHRONIZE, FileAttributes.Normal, ShareAccess.Read, CreateDisposition.FILE_OPEN, CreateOptions.FILE_NON_DIRECTORY_FILE | CreateOptions.FILE_SYNCHRONOUS_IO_ALERT, null);
+            
+    //         // read file and save in stream
+    //         System.IO.MemoryStream stream = new System.IO.MemoryStream();
+    //         byte[] data;
+    //         long bytesRead = 0;
+    //         while (true)
+    //         {
+    //             status = fileStore.ReadFile(out data, fileHandle, bytesRead, (int)client.MaxReadSize);
+    //             if (status != NTStatus.STATUS_SUCCESS && status != NTStatus.STATUS_END_OF_FILE)
+    //             {
+    //                 throw new Exception("Failed to read from file");
+    //             }
+
+    //             if (status == NTStatus.STATUS_END_OF_FILE || data.Length == 0)
+    //             {
+    //                 break;
+    //             }
+    //             bytesRead += data.Length;
+    //             stream.Write(data, 0, data.Length);
+    //         }
+
+    //         // save and reload file
+    //         // string path = "Assets/OBJImport/Samples/tw.obj";
+    //         // System.IO.File.WriteAllBytes(path, stream.ToArray());
+    //         var loadedObj = new OBJLoader().Load(stream);
+    //         OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, loadedObj);
+
+    //         status = fileStore.CloseFile(fileHandle);
+    //         status = fileStore.Disconnect();
+    //     }
+    //     else 
+    //     {
+    //         Debug.LogError("unable to open "+shareName+" share name");
+    //     }
+    // }
+
+    private byte[] DownloadObject(SMB2Client client, string shareName, string filePath)
     {
         NTStatus status;
         ISMBFileStore fileStore = client.TreeConnect(shareName, out status);
 
-        if (status == NTStatus.STATUS_SUCCESS)
-        {
-            object fileHandle;
-            FileStatus fileStatus;
-            if (fileStore is SMB1FileStore)
-            {
-                filePath = @"\\" + filePath;
-            }
-            status = fileStore.CreateFile(out fileHandle, out fileStatus, filePath, AccessMask.GENERIC_READ | AccessMask.SYNCHRONIZE, FileAttributes.Normal, ShareAccess.Read, CreateDisposition.FILE_OPEN, CreateOptions.FILE_NON_DIRECTORY_FILE | CreateOptions.FILE_SYNCHRONOUS_IO_ALERT, null);
-            
-            // read file and save in stream
-            System.IO.MemoryStream stream = new System.IO.MemoryStream();
-            byte[] data;
-            long bytesRead = 0;
-            while (true)
-            {
-                status = fileStore.ReadFile(out data, fileHandle, bytesRead, (int)client.MaxReadSize);
-                if (status != NTStatus.STATUS_SUCCESS && status != NTStatus.STATUS_END_OF_FILE)
-                {
-                    throw new Exception("Failed to read from file");
-                }
-
-                if (status == NTStatus.STATUS_END_OF_FILE || data.Length == 0)
-                {
-                    break;
-                }
-                bytesRead += data.Length;
-                stream.Write(data, 0, data.Length);
-            }
-
-            // save and reload file
-            // string path = "Assets/OBJImport/Samples/tw.obj";
-            // System.IO.File.WriteAllBytes(path, stream.ToArray());
-            var loadedObj = new OBJLoader().Load(stream);
-            OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, loadedObj);
-
-            status = fileStore.CloseFile(fileHandle);
-            status = fileStore.Disconnect();
-        }
-        else 
-        {
+        if (status != NTStatus.STATUS_SUCCESS) {
             Debug.LogError("unable to open "+shareName+" share name");
+            return null;
         }
+            
+        object fileHandle;
+        FileStatus fileStatus;
+        if (fileStore is SMB1FileStore)
+        {
+            filePath = @"\\" + filePath;
+        }
+        status = fileStore.CreateFile(out fileHandle, out fileStatus, filePath, AccessMask.GENERIC_READ | AccessMask.SYNCHRONIZE, FileAttributes.Normal, ShareAccess.Read, CreateDisposition.FILE_OPEN, CreateOptions.FILE_NON_DIRECTORY_FILE | CreateOptions.FILE_SYNCHRONOUS_IO_ALERT, null);
+        
+        // read data file
+        byte[] buffer, data;
+        List<byte> data_list = new List<byte>();
+        long bytesRead = 0;
+        while (true)
+        {
+            status = fileStore.ReadFile(out buffer, fileHandle, bytesRead, (int)client.MaxReadSize);
+            if (status != NTStatus.STATUS_SUCCESS && status != NTStatus.STATUS_END_OF_FILE)
+            {
+                throw new Exception("Failed to read from file");
+            }
+
+            if (status == NTStatus.STATUS_END_OF_FILE || buffer.Length == 0)
+            {
+                break;
+            }
+            bytesRead += buffer.Length;
+            data_list.AddRange(buffer);
+        }
+        data = data_list.ToArray();
+
+        status = fileStore.CloseFile(fileHandle);
+        status = fileStore.Disconnect();
+
+        return data;
     }
 }
