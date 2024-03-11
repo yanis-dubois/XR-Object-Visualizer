@@ -304,12 +304,35 @@ public class SocketHandler
     }
 
     /// Method to receive a byte array from the server.
+    // public async Task<byte[]> Listen(uint msgSize)
+    // {
+    //     byte[] bytes = new byte[msgSize];
+    //     int bytesRead = await clientStream.ReadAsync(bytes, 0, bytes.Length);
+    //     byte[] receivedBytes = new byte[bytesRead];
+    //     Array.Copy(bytes, receivedBytes, bytesRead);
+    //     return receivedBytes;
+    // }
+
     public async Task<byte[]> Listen(uint msgSize)
     {
-        byte[] bytes = new byte[msgSize];
-        int bytesRead = await clientStream.ReadAsync(bytes, 0, bytes.Length);
-        byte[] receivedBytes = new byte[bytesRead];
-        Array.Copy(bytes, receivedBytes, bytesRead);
+        byte[] receivedBytes = new byte[msgSize];
+        int totalBytesRead = 0;
+
+        while (totalBytesRead < msgSize)
+        {
+            int bytesRead = await clientStream.ReadAsync(receivedBytes, totalBytesRead, (int)msgSize - totalBytesRead);
+            Debug.Log("Bytes read: " + bytesRead);
+            if (bytesRead == 0)
+            {
+                // Connection has been closed, terminated, or no more data is available.
+                break;
+            }
+            totalBytesRead += bytesRead;
+        }
+
+        // If totalBytesRead is less than msgSize, you can handle it based on your application's logic.
+        // For example, throw an exception or return the partial data.
+        Debug.Log("Total bytes read: " + totalBytesRead);
         return receivedBytes;
     }
 

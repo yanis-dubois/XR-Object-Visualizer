@@ -114,7 +114,7 @@ public class OpenIGTLinkConnect : MonoBehaviour
             ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
             byte[] iMSGbyteArray = null;
 
-            Task<byte[]> task = socket.Listen(512);
+            Task<byte[]> task = socket.Listen(60);
             yield return new WaitUntil(() => task.IsCompleted);
 
             if (task.IsFaulted)
@@ -138,11 +138,16 @@ public class OpenIGTLinkConnect : MonoBehaviour
                     // Get the size of the body from the header information
                     uint bodySize = Convert.ToUInt32(iHeaderInfo.bodySize);
 
+                    task = socket.Listen(bodySize-2);
+                    yield return new WaitUntil(() => task.IsCompleted);
+
+                    iMSGbyteArray = task.Result;
+
                     if ((iHeaderInfo.msgType).Contains("STATUS"))
                     {
                         // Extract the status message from the message
                         string status = ReadMessageFromServer.ExtractStatusInfo(iMSGbyteArray, iHeaderInfo);
-                        Debug.Log("STATUS : "+status);
+                        Debug.Log("STATUS : " + status);
                     }
 
                     // Process the message when it is complete (that means, we have received as many bytes as the body size + the header size)
@@ -161,14 +166,22 @@ public class OpenIGTLinkConnect : MonoBehaviour
 
                         else if ((iHeaderInfo.msgType).Contains("IMAGE"))
                         {
-                            // Read and apply the image content to our preview plane
-                            // ApplyImageInfo(iMSGbyteArray, iHeaderInfo);
-                        }
-                        else if ((iHeaderInfo.msgType).Contains("STATUS"))
-                        {
-                            // Extract the status message from the message
-                            string status = ReadMessageFromServer.ExtractStatusInfo(iMSGbyteArray, iHeaderInfo);
-                            Debug.Log("STATUS : "+status);
+                            // La taille totale du message est la somme de la taille de l'en-tête et de la taille du corps.
+                            uint totalMsgSize = headerSize + bodySize;
+                            Task<byte[]> imageTask = socket.Listen(totalMsgSize);
+
+                            yield return new WaitUntil(() => imageTask.IsCompleted);
+
+                            if (imageTask.IsFaulted)
+                            {
+                                Debug.Log("Error listening to the server for the image message");
+                            }
+                            else
+                            {
+                                byte[] imageByteArray = imageTask.Result;
+                                // Traitement de l'image...
+                                Debug.Log("Image received");
+                            }
                         }
                         else
                         {

@@ -286,13 +286,15 @@ public class ReadMessageFromServer
     public static String ExtractStatusInfo(byte[] iMSGbyteArray, ReadMessageFromServer.HeaderInfo iHeaderInfo)
     {
         /*
-        C 	uint16 	Status code groups: 1-Ok, 2-Generic Error, ... (see below)
-        SUB_CODE 	int64 	Sub-code for the error (ex. 0x200 - file not found)
-        ERROR_NAME 	char[20] 	"Error", "OK", "Warning" - can be anything, don't relay on this
+        C 	        uint16 	            Status code groups: 1-Ok, 2-Generic Error, ... (see below)
+        SUB_CODE 	int64 	            Sub-code for the error (ex. 0x200 - file not found)
+        ERROR_NAME 	char[20] 	        "Error", "OK", "Warning" - can be anything, don't relay on this
         MESSAGE 	char[BODY_SIZE-30] 	Optional (English) description (ex. "File C:\test.ini not found")
         */
 
-        uint headerSize = iHeaderInfo.headerSize + iHeaderInfo.extHeaderSize;
+        // uint headerSize = iHeaderInfo.headerSize + iHeaderInfo.extHeaderSize;
+        uint headerSize = iHeaderInfo.extHeaderSize;
+        headerSize = headerSize - 2;
 
         byte[] statusBytes = new byte[2];
         byte[] subCodeBytes = new byte[8];
