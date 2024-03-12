@@ -1,4 +1,3 @@
-using Dummiesman;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,17 +8,14 @@ using SMBLibrary;
 
 public class ObjFromSamba : MonoBehaviour
 {
-    public GameObject interactableObjectPrefab;
-    public GameObject objectSpawner; 
-
-    // Server details and credentials
     public TextMeshProUGUI serverIP_text;
     public TextMeshProUGUI shareName_text;
     public TextMeshProUGUI filePath_text;
     public TextMeshProUGUI username_text;
     public TextMeshProUGUI password_text;
+    public GameObject validButton;
 
-    public async void LoadObject()
+    public async Task<byte[]> LoadObject()
     {
         string domain = "";
         string serverIP = serverIP_text.text.Substring(0, serverIP_text.text.Length-1);
@@ -34,32 +30,29 @@ public class ObjFromSamba : MonoBehaviour
         Debug.Log("password: "+password);
 
         SMB2AsyncClient client = await ConnectToServer(serverIP, username, password, domain);
-        if (client != null) {
-            // Print shares
-            // [broken by async feature]
-            // List<string> shares = await ListShares(client);
-            // foreach (string share in shares) {
-            //     Debug.Log("shares : " + share);
-            // }
-
-            // Print files
-            List<string> files = await ListFiles(client, shareName);
-            foreach (string file in files) {
-                Debug.Log("files : " + file);
-            }
-
-            // download the file
-            byte[] results = await DownloadObject(client, shareName, filePath);
-            Debug.Log("data size = "+results.Length);
-            var stream = new System.IO.MemoryStream(results);
-            var tmpObj = new OBJLoader().Load(stream);
-            OBJInstantiate.instantiate(interactableObjectPrefab, objectSpawner, tmpObj);
-
-            DisconnectFromServer(client);
-        } 
-        else {
+        if (client == null) {
             Debug.LogError("unable to connect to server");
+            return null;
         }
+
+        // Print shares
+        // [broken by async feature]
+        // List<string> shares = await ListShares(client);
+        // foreach (string share in shares) {
+        //     Debug.Log("shares : " + share);
+        // }
+
+        // Print files
+        List<string> files = await ListFiles(client, shareName);
+        foreach (string file in files) {
+            Debug.Log("files : " + file);
+        }
+
+        // download the file
+        byte[] results = await DownloadObject(client, shareName, filePath);
+        DisconnectFromServer(client);
+
+        return results;
     }
 
     // Connect to the server
