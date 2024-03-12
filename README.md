@@ -18,29 +18,43 @@ With the APK, you can follow the "Install APK via ADB" section of [this](https:/
 
 ## Usage
 
-Currently, the app allows loading "obj" files into the scene and manipulating them. However, you need to download the files onto the headset first.
+The application currently supports loading "obj" files into the scene and offers tools for manipulation. Files can be loaded from various sources:
 
-For now the app can load an "obj" file from an "https" source written in a raw string in the code. The following guide describe a future implementation, that is not working yet, to open an "obj" using the file system.
+- Web: Files can be fetched via HTTP/HTTPS protocols.
+- Samba Share: Access files stored on a Samba share.
+- [Work in Progress] Slicer3D (VTK Files): Integration with Slicer3D via the OpenIGTLink protocol.
 
-### Downloading OBJ Files [WIP]
+### Selecting the Source
 
-The Meta Quest 3 file system is highly restrictive; it does not permit opening a "base" directory like "Download" as they are protected. Therefore, we need to create new subdirectories.
+To choose the data source, gesture your hand in your preferred direction to open a menu. Then, with your other hand, select the desired source from the Object Load dropdown menu.
 
-To access your headset's file system, follow the official Meta guide [here](https://www.meta.com/fr-fr/help/quest/articles/headsets-and-accessories/using-your-headset/transfer-files-from-computer-to-headset/).
+### Loading from the Web
 
-Once in the file system, create a subfolder (for example, one named "OBJ" within the "Download" folder) and drop your desired "obj" files into it.
+Navigate to the URL menu, enter the desired URL, and press the validate button. Loading occurs asynchronously, so please be patient as the model loads.
 
-### Displaying the Files in the App [WIP]
+### Loading from a Samba Share
 
-1. When the app launches, grant it the right to access file storage.
-2. Initially, you should see a file browser; click on the "Browse..." part on the left.
-3. From there, navigate in the native file explorer to the custom folder you created with the "obj" files (e.g., Quest3 -> Download -> OBJ) and select "Use this folder".
-4. The selected folder should now appear in the sidebar of our browser, providing access to all your files.
-5. Select the file you want to load, and voilà.
+In the SMB menu, provide the necessary Samba server information, including the share name and file path for loading. If authentication is required, input the username and password accordingly.
 
-### Manipulating the object
+### [Work in Progress] OpenIGTLink
 
-- Inner triggers : Grab an object within range and move it.
-- Back triggers : Select on the UI or move an object with the rays.
+The OpenIGTLink connection operates as a client. Enter the server's IP address and port, if different from the default, in the menu to establish the connection.
 
-- Hand controls : TODO
+### Object Manipulation
+
+#### Opening the Menu
+
+To access the menu, tilt your hand towards yourself to trigger its opening.
+
+#### Controller Controls
+
+- **Inner Triggers**: Use these triggers to grasp and move objects within reach.
+- **Back Triggers**: Use these triggers to select items on the user interface or manipulate objects with rays.
+
+#### Hand Controls
+
+- **Ray Mode**:
+  - Transition into ray mode by clawing your thumb and index.
+  - Pinch gestures with the rays enable object grabbing or UI selection.
+- **Direct Object Interaction**:
+  - Directly pinching an object enables you to grab it for manipulation.
