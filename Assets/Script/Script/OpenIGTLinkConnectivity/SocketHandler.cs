@@ -304,15 +304,6 @@ public class SocketHandler
     }
 
     /// Method to receive a byte array from the server.
-    // public async Task<byte[]> Listen(uint msgSize)
-    // {
-    //     byte[] bytes = new byte[msgSize];
-    //     int bytesRead = await clientStream.ReadAsync(bytes, 0, bytes.Length);
-    //     byte[] receivedBytes = new byte[bytesRead];
-    //     Array.Copy(bytes, receivedBytes, bytesRead);
-    //     return receivedBytes;
-    // }
-
     public async Task<byte[]> Listen(uint msgSize)
     {
         byte[] receivedBytes = new byte[msgSize];

@@ -23,8 +23,6 @@ public class OpenIGTLinkConnect : MonoBehaviour
     uint headerSize = 58; // Size of the header of every OpenIGTLink message
     private SocketHandler socket; // Socket to connect to Slicer
     bool isConnected; // Boolean to check if the socket is connected
-    // public string ipString; // IP address of the computer running Slicer
-    // public int port; // Port of the computer running Slicer
     string ipString; // IP address of the computer running Slicer
     int port; // Port of the computer running Slicer
     public TextMeshProUGUI serverIP_text;
@@ -55,7 +53,6 @@ public class OpenIGTLinkConnect : MonoBehaviour
         crcPolynomial = Convert.ToUInt64(crcPolynomialBinary, 2);
         crcGenerator.Init(crcPolynomial);
 
-        // isConnected = ConnectToSlicer(ipString, port);
     }
 
     // This function is called when the user activates the connectivity switch to start the communication with 3D Slicer
@@ -77,7 +74,6 @@ public class OpenIGTLinkConnect : MonoBehaviour
         // Assets/OpenIGTLinkConnectivity/OpenIGTLinkConnect.cs(79,28): error CS0029: Cannot implicitly convert type 'System.Threading.Tasks.Task<bool>' to 'bool'
         // bool isConnected = socket.Connect(ipString, port);
         socket.Connect(ipString, port);
-        // Debug.Log("Connected: " + isConnected);
 
         // start a coroutine
         listeningRoutine = StartCoroutine(ListenSlicerInfo());
@@ -108,7 +104,7 @@ public class OpenIGTLinkConnect : MonoBehaviour
     {
         while (true)
         {
-            Debug.Log("Listening...");
+            Debug.Log("\nListening...");
             yield return null;
 
             ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
@@ -129,64 +125,49 @@ public class OpenIGTLinkConnect : MonoBehaviour
                 {
                     ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
                     // Store the information of the header in the structure iHeaderInfo
-                    
                     ReadMessageFromServer.HeaderInfo iHeaderInfo = ReadMessageFromServer.ReadHeaderInfo(iMSGbyteArray);
 
-                    Debug.Log("Message type"+ iHeaderInfo.msgType);
+                    Debug.Log("Message type : "+ iHeaderInfo.msgType);
 
-                    ////////// READ THE BODY OF THE INCOMING MESSAGES //////////
                     // Get the size of the body from the header information
                     uint bodySize = Convert.ToUInt32(iHeaderInfo.bodySize);
 
+                    ////////// READ THE BODY OF THE INCOMING MESSAGES //////////
                     task = socket.Listen(bodySize-2);
                     yield return new WaitUntil(() => task.IsCompleted);
 
                     iMSGbyteArray = task.Result;
 
-                    if ((iHeaderInfo.msgType).Contains("STATUS"))
+                    // Compare different message types and act accordingly
+                    if (iMSGbyteArray.Length >= (int)bodySize-2)
                     {
-                        // Extract the status message from the message
-                        string status = ReadMessageFromServer.ExtractStatusInfo(iMSGbyteArray, iHeaderInfo);
-                        Debug.Log("STATUS : " + status);
-                    }
-
-                    // Process the message when it is complete (that means, we have received as many bytes as the body size + the header size)
-                    if (iMSGbyteArray.Length >= (int)bodySize + (int)headerSize )
-                    {
-                        // Compare different message types and act accordingly
-                        if ((iHeaderInfo.msgType).Contains("TRANSFORM"))
+                        if ((iHeaderInfo.msgType).Contains("STATUS"))
                         {
-                            // Extract the transform matrix from the message
-                            Matrix4x4 matrix = ReadMessageFromServer.ExtractTransformInfo(iMSGbyteArray, scaleMultiplier, (int)iHeaderInfo.headerSize);
-                            // print the matrix
-                            Debug.Log(matrix);
-                            // Apply the transform matrix to the object
-                            // ApplyTransformToGameObject(matrix, movingPlane);
+                            string status = ReadMessageFromServer.ExtractStatusInfo(iMSGbyteArray, iHeaderInfo);
+                            Debug.Log("STATUS : " + status);
                         }
+                        else if ((iHeaderInfo.msgType).Contains("TRANSFORM"))
+                        {
+                            Matrix4x4 matrix = ReadMessageFromServer.ExtractTransformInfo(iMSGbyteArray, scaleMultiplier, (int)iHeaderInfo.headerSize);
+                            Debug.Log(matrix);
 
+                        }
                         else if ((iHeaderInfo.msgType).Contains("IMAGE"))
                         {
-                            // La taille totale du message est la somme de la taille de l'en-tête et de la taille du corps.
-                            uint totalMsgSize = headerSize + bodySize;
-                            Task<byte[]> imageTask = socket.Listen(totalMsgSize);
-
-                            yield return new WaitUntil(() => imageTask.IsCompleted);
-
-                            if (imageTask.IsFaulted)
-                            {
-                                Debug.Log("Error listening to the server for the image message");
-                            }
-                            else
-                            {
-                                byte[] imageByteArray = imageTask.Result;
-                                // Traitement de l'image...
-                                Debug.Log("Image received");
-                            }
+                            Debug.Log("Image received");
+                        }
+                        else if ((iHeaderInfo.msgType).Contains("POLYDATA"))
+                        {
+                            Debug.Log("Polydata received");
                         }
                         else
                         {
                             Debug.Log("Message type not recognized");
                         }
+                    }
+                    else{
+                        Debug.Log("Message body not complete. Waiting for the rest of the message...");
+                        //TODO : Implement a way to wait for the rest of the message
                     }
                 }
 
@@ -215,43 +196,6 @@ public class OpenIGTLinkConnect : MonoBehaviour
         }
     }
 
-    // //////////////////////////////// INCOMING IMAGE MESSAGE ////////////////////////////////
-    // void ApplyImageInfo(byte[] iMSGbyteArray, ReadMessageFromServer.HeaderInfo iHeaderInfo)
-    // {
-    //     // Store the information of the image's body in the structure iImageInfo
-    //     ReadMessageFromServer.ImageInfo iImageInfo = ReadMessageFromServer.ReadImageInfo(iMSGbyteArray, headerSize, iHeaderInfo.extHeaderSize);
-
-    //     if(iImageInfo.numPixX > 0 && iImageInfo.numPixY > 0)
-    //     {
-    //         // Define the material and the texture of the plane that will display the image
-    //         mediaMaterial = movingPlane.GetComponent<MeshRenderer>().material;
-    //         mediaTexture = new Texture2D(iImageInfo.numPixX, iImageInfo.numPixY, TextureFormat.Alpha8, false);
-
-    //         fixPlaneMaterial = fixPlane.GetComponent<MeshRenderer>().material;
-
-    //         // Define the array that will store the image's pixels
-    //         byte[] bodyArray_iImData = new byte[iImageInfo.numPixX * iImageInfo.numPixY];
-    //         byte[] bodyArray_iImDataInv = new byte[bodyArray_iImData.Length];
-            
-    //         Buffer.BlockCopy(iMSGbyteArray, iImageInfo.offsetBeforeImageContent, bodyArray_iImData, 0, bodyArray_iImData.Length);
-
-    //         // Invert the values of the pixels to have a dark background
-    //         for (int i = 0; i < bodyArray_iImData.Length; i++)
-    //         {
-    //             bodyArray_iImDataInv[i] = (byte)(255-bodyArray_iImData[i]);
-    //         }
-    //         // Load the pixels into the texture and the material
-    //         mediaTexture.LoadRawTextureData(bodyArray_iImDataInv);
-    //         mediaTexture.Apply();
-    //         mediaMaterial.mainTexture = mediaTexture;
-
-    //         fixPlaneMaterial.mainTexture = mediaTexture;
-    //     }
-    //     else
-    //     {
-    //         //Create black texture
-    //     }
-    // }
     
     // Called when the user disconnects Unity from 3D Slicer using the connectivity switch
     public void OnDisconnectClick()

@@ -53,9 +53,6 @@ public class ReadMessageFromServer
         int bodySize_SP = timeStamp_SP + byteArray_TimeStamp.Length;
         int crc_SP = bodySize_SP + byteArray_BodySize.Length;
         int extHeaderSize_SP = crc_SP + byteArray_CRC.Length;
-        
-        //Debug the length of the incoming message
-        Debug.Log("Length of the incoming message: " + iMSGbyteArray.Length);
 
         // Check if the incoming message has enough length to include the extHeader
         bool hasExtHeader = iMSGbyteArray.Length >= extHeaderSize_SP + byteArray_ExtHeaderSize.Length;
@@ -71,7 +68,6 @@ public class ReadMessageFromServer
         if (hasExtHeader)
         {
             Buffer.BlockCopy(iMSGbyteArray, extHeaderSize_SP, byteArray_ExtHeaderSize, 0, byteArray_ExtHeaderSize.Length);
-            Debug.Log("ExtHeaderSize: " + BitConverter.ToString(byteArray_ExtHeaderSize));
         }
 
 
