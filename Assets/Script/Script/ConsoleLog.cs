@@ -1,3 +1,5 @@
+// code from
+// https://stackoverflow.com/questions/67704820/how-do-i-print-unitys-debug-log-to-the-screen-gui
 using UnityEngine;
 using System.Collections;
 
@@ -27,19 +29,13 @@ public class ZzzLog : MonoBehaviour
     }
 
     void OnGUI() {
-    // Calcul de la position de départ pour centrer la zone
-    float zoneWidth = 400;
-    float zoneHeight = Screen.height * 0.5f; // Ajustez la hauteur selon vos besoins
-    float startX = (Screen.width - zoneWidth) / 2;
-    float startY = (Screen.height - zoneHeight) / 2;
+        float zoneWidth = 400;
+        float zoneHeight = Screen.height * 0.5f;
+        float startX = (Screen.width - zoneWidth) / 2;
+        float startY = (Screen.height - zoneHeight) / 2;
 
-    // Utilisation des valeurs calculées pour positionner la zone de GUI
-    GUILayout.BeginArea(new Rect(startX, startY, zoneWidth, zoneHeight));
-
-    // Affichage du texte de log
-    GUILayout.Label("\n" + string.Join("\n", myLogQueue.ToArray()));
-
-    // Fermeture de la zone de GUI
-    GUILayout.EndArea();
+        GUILayout.BeginArea(new Rect(startX, startY, zoneWidth, zoneHeight));
+        GUILayout.Label("\n" + string.Join("\n", myLogQueue.ToArray()));
+        GUILayout.EndArea();
     }
 }
