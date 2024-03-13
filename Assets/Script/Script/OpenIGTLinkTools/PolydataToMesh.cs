@@ -54,7 +54,7 @@ public class PolydataToMesh
         MeshRenderer renderer = meshObject.AddComponent<MeshRenderer>();
 
         // Set the material of the MeshRenderer
-        renderer.material = new Material(Shader.Find("Standard"));
+        renderer.material = new Material(Shader.Find("VR/SpatialMapping/Wireframe"));
     }
 
 }
