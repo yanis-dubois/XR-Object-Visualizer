@@ -158,8 +158,10 @@ public class OpenIGTLinkConnect : MonoBehaviour
                         }
                         else if ((iHeaderInfo.msgType).Contains("POLYDATA"))
                         {
-                            string test = ReadMessageFromServer.ExtractPolydataInfo(iMSGbyteArray, iHeaderInfo);
-                            Debug.Log(test);
+                            Polydata polydata = ReadMessageFromServer.ExtractPolydataInfo(iMSGbyteArray, iHeaderInfo);
+                            Debug.Log(polydata);
+                            PolydataToMesh polydataToMesh = new PolydataToMesh();
+                            polydataToMesh.renderPolydata(polydata);
                         }
                         else
                         {

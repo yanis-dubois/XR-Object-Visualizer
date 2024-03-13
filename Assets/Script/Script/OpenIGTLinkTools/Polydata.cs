@@ -276,4 +276,15 @@ public class Polydata
         return offset;
     }
 
+    public override string ToString()
+    {
+        string str = "Number of points: " + nPoints + "\n";
+        str += "Number of vertices: " + nVertices + "\n";
+        str += "Number of lines: " + nLines + "\n";
+        str += "Number of polygons: " + nPolygons + "\n";
+        str += "Number of triangle strips: " + nTriangleStrips + "\n";
+        str += "Number of attributes: " + nAttributes + "\n";
+        return str;
+    }
+
 }
