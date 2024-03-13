@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 public class ObjFromUrl : MonoBehaviour {
     public TextMeshProUGUI url_text;
     public GameObject validButton;
+    public GameObject loadingAnimation;
 
 	public async Task<byte[]> LoadObject () {
         string url = url_text.text.Substring(0, url_text.text.Length-1);

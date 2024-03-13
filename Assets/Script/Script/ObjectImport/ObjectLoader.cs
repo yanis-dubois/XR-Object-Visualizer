@@ -27,10 +27,14 @@ public class ObjectLoader : MonoBehaviour
         byte[] result = null;
         switch (mode) {
             case Mode.URL:
+                ofu.loadingAnimation.SetActive(true);
                 result = await ofu.LoadObject();
+                ofu.loadingAnimation.SetActive(false);
                 break;
             case Mode.SMB:
+                ofs.loadingAnimation.SetActive(true);
                 result = await ofs.LoadObject();
+                ofs.loadingAnimation.SetActive(false);
                 break;
             case Mode.IGT:
                 // result = await ofi.LoadObject();

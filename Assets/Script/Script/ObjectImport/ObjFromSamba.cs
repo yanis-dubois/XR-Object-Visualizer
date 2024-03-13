@@ -14,6 +14,7 @@ public class ObjFromSamba : MonoBehaviour
     public TextMeshProUGUI username_text;
     public TextMeshProUGUI password_text;
     public GameObject validButton;
+    public GameObject loadingAnimation;
 
     public async Task<byte[]> LoadObject()
     {
