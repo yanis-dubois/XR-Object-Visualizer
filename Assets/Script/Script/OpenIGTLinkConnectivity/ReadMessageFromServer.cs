@@ -13,29 +13,6 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-// Structure to handle the points of the polydata
-public struct Point
-{
-    public float x;
-    public float y;
-    public float z;
-}
-
-/*
-
-STRUCT_ARRAY
-
-STRUCT_ARRAY contains an array of point indices that represent a geometric structure, including vertices, lines, polygons, and triangle strips. The number of structures (N_STRUCT) are specified by either NVERTICES, NLINES, NPOLYGONS, or NTRIANGLE_STRIPS (see the table above).
-Data 	Type 	Description
-STRUCT_0 	POINT_INDICES 	Point indices for 0th structure
-... 	... 	...
-STRUCT_(N_STRUCT-1) 	POINT_INDICES 	Point indices for N_STRUCT-1 th structure
-*/
-public struct pointIndices
-{
-    public UInt16 pointIndex;
-}
-
 public class ReadMessageFromServer
 {
     // Information to send the transform
@@ -341,6 +318,7 @@ public class ReadMessageFromServer
 
     public static string ExtractPolydataInfo(byte[] iMSGbyteArray, ReadMessageFromServer.HeaderInfo iHeaderInfo)
     {
+        Polydata polydata = new Polydata();
         /*
         Data 	                Type 	        Description
         NPOINTS 	            uint32 	        Number of points
@@ -399,16 +377,16 @@ public class ReadMessageFromServer
             Array.Reverse(nAttributesBytes);
         }
 
-        UInt32 nPoints = BitConverter.ToUInt32(nPointsBytes);
-        UInt32 nVertices = BitConverter.ToUInt32(nVerticesBytes);
-        UInt32 sizeVertices = BitConverter.ToUInt32(sizeVerticesBytes);
-        UInt32 nLines = BitConverter.ToUInt32(nLinesBytes);
-        UInt32 sizeLines = BitConverter.ToUInt32(sizeLinesBytes);
-        UInt32 nPolygons = BitConverter.ToUInt32(nPolygonsBytes);
-        UInt32 sizePolygons = BitConverter.ToUInt32(sizePolygonsBytes);
-        UInt32 nTriangleStrips = BitConverter.ToUInt32(nTriangleStripsBytes);
-        UInt32 sizeTriangleStrips = BitConverter.ToUInt32(sizeTriangleStripsBytes);
-        UInt32 nAttributes = BitConverter.ToUInt32(nAttributesBytes);
+        polydata.NPoints = BitConverter.ToUInt32(nPointsBytes);
+        polydata.NVertices = BitConverter.ToUInt32(nVerticesBytes);
+        polydata.SizeVertices = BitConverter.ToUInt32(sizeVerticesBytes);
+        polydata.NLines = BitConverter.ToUInt32(nLinesBytes);
+        polydata.SizeLines = BitConverter.ToUInt32(sizeLinesBytes);
+        polydata.NPolygons = BitConverter.ToUInt32(nPolygonsBytes);
+        polydata.SizePolygons = BitConverter.ToUInt32(sizePolygonsBytes);
+        polydata.NTriangleStrips = BitConverter.ToUInt32(nTriangleStripsBytes);
+        polydata.SizeTriangleStrips = BitConverter.ToUInt32(sizeTriangleStripsBytes);
+        polydata.NAttributes = BitConverter.ToUInt32(nAttributesBytes);
 
         /*
         Data 	                                        Type 	        Description
@@ -416,41 +394,36 @@ public class ReadMessageFromServer
         ... 	                                        ... 	        ...
         P(NPOINTS-1)X,P(NPOINTS-1)Y,P(NPOINTS-1)Z 	    float32[3] 	    Coordinates for point (NPOINTS-1)
         */
-        List<Point> points = new List<Point>();
+        int offset = polydata.setPointsFromData((int)headerSize+40, iMSGbyteArray);
 
-        for (int i = 0; i < nPoints; i++)
+        offset = polydata.setVerticesFromData(offset, iMSGbyteArray);
+
+        offset = polydata.setLinesFromData(offset, iMSGbyteArray);
+
+        offset = polydata.setPolygonsFromData(offset, iMSGbyteArray);
+
+        Debug.Log("First polygon: ");
+        for (int i = 0; i < polydata.Polygons[0].NINDICES; i++)
         {
-            Point point = new Point();
-            byte[] pointBytes = new byte[12];
-            Buffer.BlockCopy(iMSGbyteArray, (int)headerSize + 40 + i * 12, pointBytes, 0, 12);
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(pointBytes);
-            }
-            point.x = BitConverter.ToSingle(pointBytes, 0);
-            point.y = BitConverter.ToSingle(pointBytes, 4);
-            point.z = BitConverter.ToSingle(pointBytes, 8);
-            points.Add(point);
+            Debug.Log(polydata.Polygons[0].POINT_INDEX[i]);
         }
 
-        StringBuilder polydataValues = new StringBuilder();
-        polydataValues.AppendLine("Number of points: " + nPoints);
-        polydataValues.AppendLine("Number of vertices: " + nVertices);
-        polydataValues.AppendLine("Total size of vertices data: " + sizeVertices);
-        polydataValues.AppendLine("Number of lines: " + nLines);
-        polydataValues.AppendLine("Total size of line data: " + sizeLines);
-        polydataValues.AppendLine("Number of polygons: " + nPolygons);
-        polydataValues.AppendLine("Total size of polygon data: " + sizePolygons);
-        polydataValues.AppendLine("Number of triangle strips: " + nTriangleStrips);
-        polydataValues.AppendLine("Total size of triangle strips data: " + sizeTriangleStrips);
-        polydataValues.AppendLine("Number of dataset attributes: " + nAttributes);
+        offset = polydata.setTriangleStripsFromData(offset, iMSGbyteArray);
 
-        // foreach (Point point in points)
-        // {
-        //     polydataValues.AppendLine("Point: (" + point.x + ", " + point.y + ", " + point.z + ")");
-        // }
+        // TODO : Attributes
+
+        StringBuilder polydataValues = new StringBuilder();
+        polydataValues.AppendLine("Number of points: " + polydata.NPoints);
+        polydataValues.AppendLine("Number of vertices: " + polydata.NVertices);
+        polydataValues.AppendLine("Total size of vertices data: " + polydata.SizeVertices);
+        polydataValues.AppendLine("Number of lines: " + polydata.NLines);
+        polydataValues.AppendLine("Total size of line data: " + polydata.SizeLines);
+        polydataValues.AppendLine("Number of polygons: " + polydata.NPolygons);
+        polydataValues.AppendLine("Total size of polygon data: " + polydata.SizePolygons);
+        polydataValues.AppendLine("Number of triangle strips: " + polydata.NTriangleStrips);
+        polydataValues.AppendLine("Total size of triangle strips data: " + polydata.SizeTriangleStrips);
+        polydataValues.AppendLine("Number of dataset attributes: " + polydata.NAttributes);
 
         return polydataValues.ToString();
-        
     }
 }
