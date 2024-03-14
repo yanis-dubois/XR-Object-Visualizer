@@ -2614,7 +2614,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 477062101}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daba88a30f38f3f4d8df0d146acfcd08, type: 3}
+  m_Script: {fileID: 11500000, guid: babfb3a711c194c9599e06b96b4756b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   url_text: {fileID: 562686140}
@@ -7865,6 +7865,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 7f3ae195d8663d54db4f9f921dd67a85, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7347b6042ec9e40c4a3cbd7077c91e67, type: 3}
+    - target: {fileID: 11400002, guid: 7f3ae195d8663d54db4f9f921dd67a85, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7347b6042ec9e40c4a3cbd7077c91e67, type: 3}
     - target: {fileID: 22400000, guid: 7f3ae195d8663d54db4f9f921dd67a85, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -10976,6 +10984,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 7f3ae195d8663d54db4f9f921dd67a85, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7347b6042ec9e40c4a3cbd7077c91e67, type: 3}
+    - target: {fileID: 11400002, guid: 7f3ae195d8663d54db4f9f921dd67a85, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7347b6042ec9e40c4a3cbd7077c91e67, type: 3}
     - target: {fileID: 22400000, guid: 7f3ae195d8663d54db4f9f921dd67a85, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -12103,7 +12119,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2135526524}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf4d73725b5121d4f808175574d08d9f, type: 3}
+  m_Script: {fileID: 11500000, guid: 175c75a00eac34a3b9d5596f3947ef41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   serverIP_text: {fileID: 1877979115}
