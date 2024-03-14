@@ -19,6 +19,9 @@ using TMPro;
 
 public class OpenIGTLinkConnect : MonoBehaviour
 {
+    public GameObject interactableObjectPrefab;
+    public GameObject objectSpawner;
+
     ///////// CONNECT TO 3D SLICER PARAMETERS /////////
     uint headerSize = 58; // Size of the header of every OpenIGTLink message
     private SocketHandler socket; // Socket to connect to Slicer
@@ -33,9 +36,6 @@ public class OpenIGTLinkConnect : MonoBehaviour
 
     ///////// GENERAL VARIABLES /////////
     int scaleMultiplier = 1000; // Help variable to transform meters to millimeters and vice versa
-
-    ///////// LISTEN /////////
-    bool headerReaded = false; // Boolean to check if the header of the message has been read
        
     ///////// SEND /////////
     public List<ModelInfo> infoToSend; // Array of Models to send to Slicer
@@ -160,7 +160,7 @@ public class OpenIGTLinkConnect : MonoBehaviour
                         {
                             Polydata polydata = ReadMessageFromServer.ExtractPolydataInfo(iMSGbyteArray, iHeaderInfo);
                             Debug.Log(polydata);
-                            PolydataToMesh polydataToMesh = new PolydataToMesh();
+                            PolydataToMesh polydataToMesh = new PolydataToMesh(objectSpawner, interactableObjectPrefab);
                             polydataToMesh.renderPolydata(polydata);
                         }
                         else
