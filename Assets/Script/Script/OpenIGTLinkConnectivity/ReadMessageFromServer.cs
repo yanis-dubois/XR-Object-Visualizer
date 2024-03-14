@@ -402,27 +402,9 @@ public class ReadMessageFromServer
 
         offset = polydata.setPolygonsFromData(offset, iMSGbyteArray);
 
-        Debug.Log("First polygon: ");
-        for (int i = 0; i < polydata.Polygons[0].NINDICES; i++)
-        {
-            Debug.Log(polydata.Polygons[0].POINT_INDEX[i]);
-        }
-
         offset = polydata.setTriangleStripsFromData(offset, iMSGbyteArray);
 
         // TODO : Attributes
-
-        // StringBuilder polydataValues = new StringBuilder();
-        // polydataValues.AppendLine("Number of points: " + polydata.NPoints);
-        // polydataValues.AppendLine("Number of vertices: " + polydata.NVertices);
-        // polydataValues.AppendLine("Total size of vertices data: " + polydata.SizeVertices);
-        // polydataValues.AppendLine("Number of lines: " + polydata.NLines);
-        // polydataValues.AppendLine("Total size of line data: " + polydata.SizeLines);
-        // polydataValues.AppendLine("Number of polygons: " + polydata.NPolygons);
-        // polydataValues.AppendLine("Total size of polygon data: " + polydata.SizePolygons);
-        // polydataValues.AppendLine("Number of triangle strips: " + polydata.NTriangleStrips);
-        // polydataValues.AppendLine("Total size of triangle strips data: " + polydata.SizeTriangleStrips);
-        // polydataValues.AppendLine("Number of dataset attributes: " + polydata.NAttributes);
 
         return polydata;
     }

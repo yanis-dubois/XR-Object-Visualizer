@@ -52,8 +52,6 @@ public class PolydataToMesh
 
         // Add a MeshRenderer component to the GameObject
         MeshRenderer renderer = meshObject.AddComponent<MeshRenderer>();
-        // Set the material of the MeshRenderer
-        renderer.material = new Material(Shader.Find("VR/SpatialMapping/Wireframe"));
 
         InstantiateObject(meshObject, false);
     }
