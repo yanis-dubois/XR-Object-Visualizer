@@ -1,6 +1,4 @@
-﻿// // Code retrieved from: https://github.com/BIIG-UC3M/IGT-UltrARsound
-
-using System;
+﻿using System;
 using System.Text;
 using System.Net.Sockets;
 using UnityEngine;

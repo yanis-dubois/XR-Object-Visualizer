@@ -1,5 +1,6 @@
 ﻿// This code is based on the one provided in: https://github.com/franklinwk/OpenIGTLink-Unity
-// Modified by Alicia Pose Díez de la Lastra, from Universidad Carlos III de Madrid
+// Modified by Alicia Pose Díez de la Lastra, from Universidad Carlos III de Madrid for the project : https://github.com/BSEL-UC3M/HoloLens2and3DSlicer-PedicleScrewPlacementPlanning
+// Modified by Rigaut Coralie and Oçafrain Maxime for a final year project at University of Bordeaux.
 
 using UnityEngine;
 using System;
@@ -123,7 +124,6 @@ public class OpenIGTLinkConnect : MonoBehaviour
  
                 if (iMSGbyteArray.Length >= (int)headerSize)
                 {
-                    ////////// READ THE HEADER OF THE INCOMING MESSAGES //////////
                     // Store the information of the header in the structure iHeaderInfo
                     ReadMessageFromServer.HeaderInfo iHeaderInfo = ReadMessageFromServer.ReadHeaderInfo(iMSGbyteArray);
 
@@ -150,16 +150,17 @@ public class OpenIGTLinkConnect : MonoBehaviour
                         {
                             Matrix4x4 matrix = ReadMessageFromServer.ExtractTransformInfo(iMSGbyteArray, scaleMultiplier, (int)iHeaderInfo.headerSize);
                             Debug.Log(matrix);
-
                         }
                         else if ((iHeaderInfo.msgType).Contains("IMAGE"))
                         {
                             Debug.Log("Image received");
+                            //TODO : Implement the extraction of the image information
                         }
                         else if ((iHeaderInfo.msgType).Contains("POLYDATA"))
                         {
+                            // Extract the polydata information from the message and store it in the structure polydata
                             Polydata polydata = ReadMessageFromServer.ExtractPolydataInfo(iMSGbyteArray, iHeaderInfo);
-                            Debug.Log(polydata);
+                            // Render the polydata in Unity
                             PolydataToMesh polydataToMesh = new PolydataToMesh(objectSpawner, interactableObjectPrefab);
                             polydataToMesh.renderPolydata(polydata);
                         }
@@ -172,6 +173,10 @@ public class OpenIGTLinkConnect : MonoBehaviour
                         Debug.Log("Message body not complete. Waiting for the rest of the message...");
                         //TODO : Implement a way to wait for the rest of the message
                     }
+                }
+                else
+                {
+                    Debug.Log("Message header not complete");
                 }
 
             }

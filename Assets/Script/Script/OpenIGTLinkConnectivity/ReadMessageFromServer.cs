@@ -1,5 +1,6 @@
 // This code is based on the one provided in: https://github.com/franklinwk/OpenIGTLink-Unity
 // Modified by Alicia Pose, from Universidad Carlos III de Madrid
+// Modified by Rigaut Coralie and Oçafrain Maxime for a final year project at University of Bordeaux.
 // This script defines de structure to read transform and image messages using the OpenIGTLink communication protocol
 
 using UnityEngine;
@@ -279,6 +280,7 @@ public class ReadMessageFromServer
         return matrix;
     }
 
+    // Extract the incomming message Status information
     public static String ExtractStatusInfo(byte[] iMSGbyteArray, ReadMessageFromServer.HeaderInfo iHeaderInfo)
     {
         /*
@@ -287,8 +289,6 @@ public class ReadMessageFromServer
         ERROR_NAME 	char[20] 	        "Error", "OK", "Warning" - can be anything, don't relay on this
         MESSAGE 	char[BODY_SIZE-30] 	Optional (English) description (ex. "File C:\test.ini not found")
         */
-
-        // uint headerSize = iHeaderInfo.headerSize + iHeaderInfo.extHeaderSize;
         uint headerSize = iHeaderInfo.extHeaderSize;
         headerSize = headerSize - 2;
 
@@ -316,6 +316,7 @@ public class ReadMessageFromServer
         return "Status: " + status + " SubCode: " + subCode + " ErrorName: " + errorName + " Message: " + message;
     }
 
+    // Extract the incomming message Polydata information
     public static Polydata ExtractPolydataInfo(byte[] iMSGbyteArray, ReadMessageFromServer.HeaderInfo iHeaderInfo)
     {
         Polydata polydata = new Polydata();
@@ -388,12 +389,6 @@ public class ReadMessageFromServer
         polydata.SizeTriangleStrips = BitConverter.ToUInt32(sizeTriangleStripsBytes);
         polydata.NAttributes = BitConverter.ToUInt32(nAttributesBytes);
 
-        /*
-        Data 	                                        Type 	        Description
-        P0X,P0Y,P0Z 	                                float32[3] 	    Coordinates for point 0
-        ... 	                                        ... 	        ...
-        P(NPOINTS-1)X,P(NPOINTS-1)Y,P(NPOINTS-1)Z 	    float32[3] 	    Coordinates for point (NPOINTS-1)
-        */
         int offset = polydata.setPointsFromData((int)headerSize+40, iMSGbyteArray);
 
         offset = polydata.setVerticesFromData(offset, iMSGbyteArray);

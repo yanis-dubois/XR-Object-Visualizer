@@ -2,7 +2,17 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+/*
+This class is used to store the information of a Polydata object.
+cf. : 
+- https://github.com/openigtlink/OpenIGTLink/blob/master/Documents/Protocol/polydata.md
+- https://vtk.org/doc/nightly/html/classvtkPolyData.html 
+*/
 
+
+/*
+This struct is used to store the indices of the points that form a line, a polygon or a triangle strip.
+*/
 public struct pointIndices
 {
     public uint NINDICES;
@@ -14,6 +24,7 @@ public struct pointIndices
         POINT_INDEX = pointIndex;
     }
 }
+
 public class Polydata
 {
     private UInt32 nPoints;
@@ -27,6 +38,7 @@ public class Polydata
     private UInt32 sizeTriangleStrips;
     private UInt32 nAttributes;
 
+    // Switched from a Points struct to a Vector3 array for simplicity
     private Vector3[] points;
     private List<pointIndices> vertices = new List<pointIndices>();
     private List<pointIndices> lines = new List<pointIndices>();
@@ -124,6 +136,14 @@ public class Polydata
         set { triangleStrips = value; }
     }
 
+    // TODO : The FromData methods should be factorized
+    
+    /*
+    Using the data from the byte array (OpenIGTLink message), this method fill the Vector3 points array.
+    - offset: the position in the byte array where the points data starts
+    - iMSGbyteArray: the byte array containing the OpenIGTLink message
+    Returns the new offset after the points data
+    */
     public int setPointsFromData(int offset, byte[] iMSGbyteArray)
     {
         points = new Vector3[nPoints];
@@ -159,7 +179,12 @@ public class Polydata
         return offset;
     }
 
-    // Fill the struct array
+    /*
+    Using the data from the byte array (OpenIGTLink message), this method fill the vertices list.
+    - offset: the position in the byte array where the vertices data starts
+    - iMSGbyteArray: the byte array containing the OpenIGTLink message
+    Returns the new offset after the vertices data
+    */
     public int setVerticesFromData(int offset, byte[] iMSGbyteArray){
         for(int i=0; i < nVertices; i++)
         {
@@ -189,6 +214,12 @@ public class Polydata
         return offset;
     }
 
+    /*
+    Using the data from the byte array (OpenIGTLink message), this method fill the lines list.
+    - offset: the position in the byte array where the lines data starts
+    - iMSGbyteArray: the byte array containing the OpenIGTLink message
+    Returns the new offset after the lines data
+    */
     public int setLinesFromData(int offset, byte[] iMSGbyteArray){
         for(int i=0; i < nLines; i++)
         {
@@ -218,6 +249,12 @@ public class Polydata
         return offset;
     }
 
+    /*
+    Using the data from the byte array (OpenIGTLink message), this method fill the polygons list.
+    - offset: the position in the byte array where the polygons data starts
+    - iMSGbyteArray: the byte array containing the OpenIGTLink message
+    Returns the new offset after the polygons data
+    */
     public int setPolygonsFromData(int offset, byte[] iMSGbyteArray){
         for(int i=0; i < nPolygons; i++)
         {
@@ -247,6 +284,12 @@ public class Polydata
         return offset;
     }
 
+    /*
+    Using the data from the byte array (OpenIGTLink message), this method fill the triangleStrips list.
+    - offset: the position in the byte array where the triangle strips data starts
+    - iMSGbyteArray: the byte array containing the OpenIGTLink message
+    Returns the new offset after the triangle strips data
+    */
     public int setTriangleStripsFromData(int offset, byte[] iMSGbyteArray){
         for(int i=0; i < nTriangleStrips; i++)
         {
