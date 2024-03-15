@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UI; // Pour UI Text
-using TMPro; // Décommentez si vous utilisez TextMeshPro
+using UnityEngine.UI;
+using TMPro;
 
 public class ZLog : MonoBehaviour
 {
