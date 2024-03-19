@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2466508027662713404}
   - component: {fileID: 8600423746953932247}
   - component: {fileID: 8073495396236224413}
+  - component: {fileID: -1043157202370233792}
   m_Layer: 0
   m_Name: InteractableObjectPrefab
   m_TagString: Untagged
@@ -311,3 +312,16 @@ MonoBehaviour:
   m_MinimumScaleRatio: 0.15
   m_MaximumScaleRatio: 4
   m_ScaleMultiplier: 0.25
+--- !u!114 &-1043157202370233792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6702171966205460924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e90e99a0b366d845ae36b0edfb54cf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isGrab: 0
