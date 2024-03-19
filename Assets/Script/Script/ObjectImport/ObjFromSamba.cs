@@ -79,8 +79,8 @@ public class ObjFromSamba : MonoBehaviour
         client.Disconnect();
     }
 
-    // List all the share from the server
     // [broken by async feature]
+    // List all the share from the server
     // async Task<List<string>> ListShares(SMB2Client client)
     // {
     //     Tuple<List<string>, NTStatus> tuple = await client.ListShares();

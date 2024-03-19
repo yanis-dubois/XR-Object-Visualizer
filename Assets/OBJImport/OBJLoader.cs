@@ -105,8 +105,8 @@ namespace Dummiesman
             Dictionary<string, OBJObjectBuilder> builderDict = new Dictionary<string, OBJObjectBuilder>();
             OBJObjectBuilder currentBuilder = null;
 
-            Materials.Add("base", new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "base" });
-            string currentMaterial = "base";
+            Materials.Add("default", new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = "default" });
+            string currentMaterial = "default";
 
             //lists for face data
             //prevents excess GC
@@ -152,7 +152,8 @@ namespace Dummiesman
 					buffer.SkipWhitespaces();
 					buffer.ReadUntilNewLine();
 					string mtlLibPath = buffer.GetString();
-					LoadMaterialLibrary(mtlLibPath);
+                    // material not supported yet
+					// LoadMaterialLibrary(mtlLibPath);
 					continue;
 				}
 				
@@ -178,12 +179,13 @@ namespace Dummiesman
 					buffer.SkipWhitespaces();
 					buffer.ReadUntilNewLine();
 					string materialName = buffer.GetString();
-                    currentMaterial = materialName;
+                    // currentMaterial = materialName;
 
-                    if(SplitMode == SplitMode.Material)
-                    {
-                        setCurrentObjectFunc.Invoke(materialName);
-                    }
+                    // mtl not supported yet
+                    // if(SplitMode == SplitMode.Material)
+                    // {
+                    //     setCurrentObjectFunc.Invoke(materialName);
+                    // }
                     continue;
                 }
 

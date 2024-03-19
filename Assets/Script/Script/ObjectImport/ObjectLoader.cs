@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Dummiesman;
 using UnityEngine;
@@ -17,38 +18,45 @@ public class ObjectLoader : MonoBehaviour
     public ObjFromSamba ofs;
 
     public async void LoadObject(Mode mode) {
+        bool is_rescale = isRescaleToggle.isOn;
         ofu.validButton.SetActive(false);
         ofs.validButton.SetActive(false);
 
-        bool is_rescale = isRescaleToggle.isOn;
-
         byte[] result = null;
-        switch (mode) {
-            case Mode.URL:
-                ofu.loadingAnimation.SetActive(true);
-                result = await ofu.LoadObject();
-                ofu.loadingAnimation.SetActive(false);
-                break;
-            case Mode.SMB:
-                ofs.loadingAnimation.SetActive(true);
-                result = await ofs.LoadObject();
-                ofs.loadingAnimation.SetActive(false);
-                break;
-            default: break;
-        }
 
-        Debug.Log("data size = " + result.Length + " byte");
-        var stream = new System.IO.MemoryStream(result);
-        var tmpObj = new OBJLoader().Load(stream);
-        Instantiate(tmpObj, is_rescale); // don't use tmpObj after that, it will be destroy
-        
-        ofu.validButton.SetActive(true);
-        ofs.validButton.SetActive(true);
+        try {
+            switch (mode) {
+                case Mode.URL:
+                    ofu.loadingAnimation.SetActive(true);
+                    result = await ofu.LoadObject();
+                    ofu.loadingAnimation.SetActive(false);
+                    break;
+                case Mode.SMB:
+                    ofs.loadingAnimation.SetActive(true);
+                    result = await ofs.LoadObject();
+                    ofs.loadingAnimation.SetActive(false);
+                    break;
+                default: break;
+            }
+
+            Debug.Log("data size = " + result.Length + " byte");
+            var stream = new System.IO.MemoryStream(result);
+            var tmpObj = new OBJLoader().Load(stream);
+            InstantiateObject(tmpObj, is_rescale); // don't use tmpObj after that, it will be destroy
+        } 
+        catch (Exception e) {
+            Debug.LogError(e);
+            throw;
+        }
+        finally {
+            ofu.validButton.SetActive(true);
+            ofs.validButton.SetActive(true);
+        }
     }
     public void LoadObjectUrl() => LoadObject(Mode.URL);
     public void LoadObjectSmb() => LoadObject(Mode.SMB);
 
-    private void Instantiate(GameObject tmpObj, bool is_rescale) {
+    private void InstantiateObject(GameObject tmpObj, bool is_rescale) {
         List<GameObject> obj_list = new();
 
         // move object in the scene tree
