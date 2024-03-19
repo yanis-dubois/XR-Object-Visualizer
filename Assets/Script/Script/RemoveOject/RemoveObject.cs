@@ -1,18 +1,50 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class RemoveObject : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+
+    [SerializeField] 
+    private InputActionReference removeButtonAction;
+
+
+    private void OnEnable(){
+        if (removeButtonAction != null)
+        {
+            // Register the callback for the performed event
+            removeButtonAction.action.performed += OnRemoveButtonPressed;
+            removeButtonAction.action.Enable();
+        }
+        else
+        {
+            Debug.LogWarning("InputActionReference is not assigned in the Inspector.");
+        }
+    }
+    
+    private void OnDisable(){
+        if (removeButtonAction != null)
+        {
+            // Register the callback for the performed event
+            removeButtonAction.action.performed += OnRemoveButtonPressed;
+            removeButtonAction.action.Enable();
+        }
+        else
+        {
+            Debug.LogWarning("InputActionReference is not assigned in the Inspector.");
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void OnRemoveButtonPressed(InputAction.CallbackContext context)
+    {       
+        if (FindObjectsOfType<IsGrab>()!=null) {
+    
+            IsGrab[] monScripts = FindObjectsOfType<IsGrab>();
+            foreach (IsGrab monScript in monScripts)
+            {
+                if (monScript.isGrab) {
+                    Destroy(monScript.gameObject);
+                }
+            }
+        }
     }
 }
