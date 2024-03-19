@@ -10,7 +10,6 @@ public class ZLog : MonoBehaviour
 {
     public uint qsize = 15; // Nombre de messages à conserver
     private Queue myLogQueue = new Queue();
-    // public Text logText; // Référence au composant Text UI
     public TMP_Text logText; // Référence au composant TMP_Text si vous utilisez TextMeshPro
 
     void Start() {
@@ -41,6 +40,5 @@ public class ZLog : MonoBehaviour
         // Mise à jour du texte UI
         if (logText != null)
             logText.text = string.Join("\n", myLogQueue.ToArray());
-        // Assurez-vous que la taille du Text s'ajuste correctement pour contenir tout le texte
     }
 }
