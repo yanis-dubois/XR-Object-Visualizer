@@ -14,6 +14,7 @@ public class ObjFromUrl : MonoBehaviour {
         return result;
 	}
 
+    // Download object from a web stream
     private async Task<byte[]> DownloadObject(string url)
     {
         var request = UnityWebRequest.Get(url);

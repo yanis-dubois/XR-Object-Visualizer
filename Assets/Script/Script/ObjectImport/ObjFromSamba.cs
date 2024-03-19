@@ -36,23 +36,23 @@ public class ObjFromSamba : MonoBehaviour
             return null;
         }
 
-        // Print shares
-        // [broken by async feature]
+        // // [broken by async feature]
+        // // Print shares
         // List<string> shares = await ListShares(client);
         // foreach (string share in shares) {
         //     Debug.Log("shares : " + share);
         // }
 
-        // Print files
-        List<string> files = await ListFiles(client, shareName);
-        foreach (string file in files) {
-            Debug.Log("files : " + file);
-        }
+        // // Print files
+        // List<string> files = await ListFiles(client, shareName);
+        // foreach (string file in files) {
+        //     Debug.Log("files : " + file);
+        // }
 
         // download the file
         byte[] results = await DownloadObject(client, shareName, filePath);
-        DisconnectFromServer(client);
 
+        DisconnectFromServer(client);
         return results;
     }
 
@@ -79,8 +79,8 @@ public class ObjFromSamba : MonoBehaviour
         client.Disconnect();
     }
 
-    // [broken by async feature]
-    // List all the share from the server
+    // // [broken by async feature]
+    // // List all the share from the server
     // async Task<List<string>> ListShares(SMB2Client client)
     // {
     //     Tuple<List<string>, NTStatus> tuple = await client.ListShares();
@@ -96,6 +96,7 @@ public class ObjFromSamba : MonoBehaviour
     //     return shares;
     // }
 
+    // List all the files present in the specified share name
     async Task<List<string>> ListFiles(SMB2AsyncClient client, string shareName, string directoryPath = "./")
     {
         List<string> fileList = new List<string>();
@@ -134,6 +135,7 @@ public class ObjFromSamba : MonoBehaviour
         return fileList;
     }
 
+    // Download data from SMB
     private async Task<byte[]> DownloadObject(SMB2AsyncClient client, string shareName, string filePath)
     {
         Tuple<SMB2AsyncFileStore, NTStatus> tuple = await client.TreeConnect(shareName);

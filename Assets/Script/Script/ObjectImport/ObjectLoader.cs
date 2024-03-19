@@ -22,8 +22,8 @@ public class ObjectLoader : MonoBehaviour
         ofu.validButton.SetActive(false);
         ofs.validButton.SetActive(false);
 
+        // load data from a loading mode
         byte[] result = null;
-
         try {
             switch (mode) {
                 case Mode.URL:
@@ -36,9 +36,12 @@ public class ObjectLoader : MonoBehaviour
                     result = await ofs.LoadObject();
                     ofs.loadingAnimation.SetActive(false);
                     break;
-                default: break;
+                default: 
+                    Debug.LogError("Unknow mode selected");
+                    return;
             }
 
+            // Create mesh from data
             Debug.Log("data size = " + result.Length + " byte");
             var stream = new System.IO.MemoryStream(result);
             var tmpObj = new OBJLoader().Load(stream);
@@ -56,6 +59,7 @@ public class ObjectLoader : MonoBehaviour
     public void LoadObjectUrl() => LoadObject(Mode.URL);
     public void LoadObjectSmb() => LoadObject(Mode.SMB);
 
+    // Add some component and do some operation to the object
     private void InstantiateObject(GameObject tmpObj, bool is_rescale) {
         List<GameObject> obj_list = new();
 
@@ -70,7 +74,7 @@ public class ObjectLoader : MonoBehaviour
             obj.GetComponent<MeshFilter>().mesh = child.GetComponent<MeshFilter>().mesh;
             obj.transform.parent = objectSpawner.transform;
             
-            // move and rescale object
+            // move objects, and calcul the max dimention of them
             Vector3 size = obj.GetComponent<Renderer>().bounds.size;
             Vector3 position = obj.GetComponent<Renderer>().bounds.center;
             obj.GetComponent<BoxCollider>().size = size;
@@ -86,13 +90,18 @@ public class ObjectLoader : MonoBehaviour
             obj_list.Add(obj);
             cpt ++;
         }
-        foreach (GameObject o in obj_list) {
-            o.transform.localScale = new Vector3(1.0f / maxDim, 1.0f / maxDim, 1.0f / maxDim);
+        // rescale objects if necessary
+        if (is_rescale) {
+            foreach (GameObject o in obj_list) {
+                o.transform.localScale = new Vector3(1.0f / maxDim, 1.0f / maxDim, 1.0f / maxDim);
+            }
         }
 
         DestroyImmediate(tmpObj);
     }
 
+    // If is_rescale, all objects will be rescaled to have a max dimension of 1m
+    // Else, they will retrieve their original scale 
     public void RescaleAllObject() {
         bool is_rescale = isRescaleToggle.isOn;
         Debug.Log("is on = "+is_rescale);

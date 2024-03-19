@@ -1,14 +1,14 @@
+// code inspired from
+// https://stackoverflow.com/questions/67704820/how-do-i-print-unitys-debug-log-to-the-screen-gui
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 using TMPro;
 
 public class ZLog : MonoBehaviour
 {
-    public uint qsize = 15; // Nombre de messages à conserver
+    public uint qsize = 15;
     private Queue myLogQueue = new Queue();
-    // public Text logText; // Référence au composant Text UI
-    public TMP_Text logText; // Référence au composant TMP_Text si vous utilisez TextMeshPro
+    public TMP_Text logText;
 
     void Start() {
         Debug.Log("Started up logging.");
@@ -35,9 +35,8 @@ public class ZLog : MonoBehaviour
         while (myLogQueue.Count > qsize)
             myLogQueue.Dequeue();
 
-        // Mise à jour du texte UI
+        // update text
         if (logText != null)
             logText.text = string.Join("\n", myLogQueue.ToArray());
-        // Assurez-vous que la taille du Text s'ajuste correctement pour contenir tout le texte
     }
 }
