@@ -72,12 +72,13 @@ public class OpenIGTLinkConnect : MonoBehaviour
 
         Debug.Log("ipString: " + ipString);
         Debug.Log("port: " + port);
-        // Assets/OpenIGTLinkConnectivity/OpenIGTLinkConnect.cs(79,28): error CS0029: Cannot implicitly convert type 'System.Threading.Tasks.Task<bool>' to 'bool'
-        // bool isConnected = socket.Connect(ipString, port);
+
         socket.Connect(ipString, port);
 
         // start a coroutine
         listeningRoutine = StartCoroutine(ListenSlicerInfo());
+
+        // // WARNING : Uncommented this code in order to start sending transformation data to the server
         // sendingRoutine = StartCoroutine(SendTransformInfo());
 
         return isConnected;
@@ -85,6 +86,9 @@ public class OpenIGTLinkConnect : MonoBehaviour
     }
 
     // Routine that continuously sends the transform information of every model in infoToSend to 3D Slicer
+    // Every InfoToSend objects must have the ModelInfo script,
+    // this behavior is inherited from https://github.com/BSEL-UC3M/HoloLens2and3DSlicer-PedicleScrewPlacementPlanning and
+    // not been changed as our goal was to get the Polydata messages.
     public IEnumerator SendTransformInfo()
     {
         while (true)
