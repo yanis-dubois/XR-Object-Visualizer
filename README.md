@@ -1,4 +1,4 @@
-# PFE_UnityPrototype
+# XR-Object-Visualizer
 
 ## Installation
 
@@ -22,7 +22,6 @@ The application currently supports loading "obj" files into the scene and offers
 
 - Web: Files can be fetched via HTTP/HTTPS protocols.
 - Samba Share: Access files stored on a Samba share.
-- [Work in Progress] Slicer3D (VTK Files): Integration with Slicer3D via the OpenIGTLink protocol.
 
 ### Selecting the Source
 
@@ -36,10 +35,6 @@ Navigate to the URL menu, enter the desired URL, and press the validate button. 
 
 In the SMB menu, provide the necessary Samba server information, including the share name and file path for loading. If authentication is required, input the username and password accordingly.
 
-### [Work in Progress] OpenIGTLink
-
-The OpenIGTLink connection operates as a client. Enter the server's IP address and port, if different from the default, in the menu to establish the connection.
-
 ### Object Manipulation
 
 #### Opening the Menu
@@ -50,6 +45,7 @@ To access the menu, tilt your hand towards yourself to trigger its opening.
 
 - **Inner Triggers**: Use these triggers to grasp and move objects within reach.
 - **Back Triggers**: Use these triggers to select items on the user interface or manipulate objects with rays.
+- **'X' button** : Press 'X' to remove the grabbed item. 
 
 #### Hand Controls
 
